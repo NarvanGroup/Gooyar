@@ -1,0 +1,37 @@
+"use client";
+import { useCustomizingStore } from "@/store/useCustomizerStore";
+import { Card } from "@mui/material";
+import { Theme, SxProps, useTheme } from "@mui/material/styles";
+// import { AppState } from '@/store/store';
+// import {useSelector} from '@/store/hooks';
+
+type Props = {
+  className?: string;
+  children: React.ReactNode;
+  sx?: SxProps<Theme> | any;
+};
+
+const BlankCard = ({ children, className, sx }: Props) => {
+  const { customizer } = useCustomizingStore();
+
+  const theme = useTheme();
+  const borderColor = theme.palette.divider;
+
+  return (
+    <Card
+      sx={{
+        p: 0,
+        border: !customizer.isCardShadow ? `1px solid ${borderColor}` : "none",
+        position: "relative",
+        ...sx,
+      }}
+      className={className}
+      elevation={customizer.isCardShadow ? 9 : 0}
+      variant={!customizer.isCardShadow ? "outlined" : undefined}
+    >
+      {children}
+    </Card>
+  );
+};
+
+export default BlankCard;

@@ -1,0 +1,26 @@
+"use client";
+
+import React from "react";
+import { Slider, Stack } from "@mui/material";
+import ChildCard from "@/components/shared/ChildCard";
+import { IconVolume, IconVolume2 } from "@tabler/icons-react";
+import VolumesliderCode from "./code/VolumesliderCode";
+
+const VolumeSlider = () => {
+  const [value, setValue] = React.useState(30);
+  const handleChange = (event: any, newValue: any) => {
+    setValue(newValue);
+  };
+
+  return (
+    <ChildCard title="Volume" codeModel={<VolumesliderCode />}>
+      <Stack direction="row" spacing={1}>
+        <IconVolume2 width={20} />
+        <Slider aria-label="Volume" value={value} onChange={handleChange} />
+        <IconVolume width={20} />
+      </Stack>
+    </ChildCard>
+  );
+};
+
+export default VolumeSlider;
