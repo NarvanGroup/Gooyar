@@ -28,7 +28,11 @@ const BlogCard = ({ post }: Btype) => {
     .replace(/[^\w-]+/g, "");
 
   return (
-    <Grid item xs={12} lg={4} md={4} sm={6} display="flex" alignItems="stretch">
+    <Grid
+      size={{ xs: 12, lg: 4, md: 4, sm: 6 }}
+      display="flex"
+      alignItems="stretch"
+    >
       <BlankCard className="hoverCard">
         <>
           <Typography

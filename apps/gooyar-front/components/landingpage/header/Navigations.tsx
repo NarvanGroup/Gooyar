@@ -112,13 +112,13 @@ const Navigations = () => {
             }}
           >
             <Grid container>
-              <Grid item sm={8} display="flex">
+              <Grid size={{ sm: 8 }} display="flex">
                 <Box p={4} pr={0} pb={3}>
                   <AppLinks />
                 </Box>
                 <Divider orientation="vertical" />
               </Grid>
-              <Grid item sm={4}>
+              <Grid size={{ sm: 4 }}>
                 <Box p={4}>
                   <QuickLinks />
                 </Box>

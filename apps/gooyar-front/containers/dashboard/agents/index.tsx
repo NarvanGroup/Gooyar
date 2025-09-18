@@ -1,57 +1,107 @@
 import React, { useEffect, useState } from "react";
-import { filter, orderBy } from "lodash";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import CardContent from "@mui/material/CardContent";
 import Fab from "@mui/material/Fab";
-import Grid from "@mui/material/Grid";
-import Rating from "@mui/material/Rating";
-import Skeleton from "@mui/material/Skeleton";
+
 import Stack from "@mui/material/Stack";
 import { Theme } from "@mui/material/styles";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 
-import { IconBasket, IconMenu2 } from "@tabler/icons-react";
+import { IconMenu2 } from "@tabler/icons-react";
 // import emptyCart from "/public/images/products/empty-shopping-cart.svg";
 
-import Image from "next/image";
-import BlankCard from "@/components/shared/BlankCard";
-import { Edit } from "@mui/icons-material";
+import {
+  Edit,
+  ArrowBack,
+  ArrowForward,
+  DeleteOutlineOutlined,
+} from "@mui/icons-material";
 import AddAgentDialog from "./components/AddAgentDialog";
 import AgentBoxSkeleton from "./components/AgentBoxSkeleton";
+import {
+  getAgentsService,
+  createAgentService,
+  deleteAgentService,
+} from "@/api/services/agentsServices";
+import { AgentModel } from "@/api/services/agentsServices/models";
 
-interface Props {
-  onClick: (event: React.SyntheticEvent | Event) => void;
-}
-
-const ProductList = ({ onClick }: Props) => {
+const Agents = () => {
   const lgUp = useMediaQuery((theme: Theme) => theme.breakpoints.up("lg"));
   const router = useRouter();
   const [showCreateAgent, setShowCreateAgent] = useState(false);
   const [newAgent, setNewAgent] = useState({ name: "", description: "" });
+  const [agents, setAgents] = useState<AgentModel[]>([]);
 
   // skeleton
   const [isLoading, setLoading] = React.useState(true);
 
+  // Load agents on component mount
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    loadAgents();
   }, []);
 
-  const getProducts = [
-    {
-      id: 1,
-      title: "Product 1",
-      price: 100,
-    },
-  ];
+  const loadAgents = async () => {
+    try {
+      setLoading(true);
+      const response = await getAgentsService();
+      if (response?.success) {
+        setAgents(response.data || []);
+      } else {
+        toast.error("Failed to load agents");
+      }
+    } catch (error) {
+      console.error("Error loading agents:", error);
+      toast.error("Failed to load agents");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateAgent = async () => {
+    try {
+      if (!newAgent.name.trim()) {
+        toast.error("Agent name is required");
+        return;
+      }
+
+      const response = await createAgentService({
+        name: newAgent.name,
+        description: newAgent.description,
+        type: "chat",
+      });
+
+      if (response?.success) {
+        toast.success("Agent created successfully");
+        setNewAgent({ name: "", description: "" });
+        setShowCreateAgent(false);
+        loadAgents(); // Reload agents
+      } else {
+        toast.error(response?.error || "Failed to create agent");
+      }
+    } catch (error) {
+      console.error("Error creating agent:", error);
+      toast.error("Failed to create agent");
+    }
+  };
+
+  const handleDeleteAgent = async (id: string) => {
+    try {
+      const response = await deleteAgentService(id);
+      if (response?.success) {
+        toast.success("Agent deleted successfully");
+        loadAgents(); // Reload agents
+      } else {
+        toast.error(response?.error || "Failed to delete agent");
+      }
+    } catch (error) {
+      console.error("Error deleting agent:", error);
+      toast.error("Failed to delete agent");
+    }
+  };
 
   return (
     <Box sx={{ p: 3, minHeight: "100%", width: "100%" }}>
@@ -59,13 +109,29 @@ const ProductList = ({ onClick }: Props) => {
 
       <Stack direction="row" justifyContent="space-between" pb={3}>
         {lgUp ? (
-          <Typography variant="h5" color="textPrimary">
-            عامل ها
-          </Typography>
+          <Box>
+            <Stack direction="row" alignItems="center" spacing={2}>
+              <Box>
+                <Typography variant="h5" color="textPrimary">
+                  عامل ها
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  بعد از ساختن عامل میتونی جزییاتش رو ویرایش کنی{" "}
+                </Typography>
+              </Box>
+            </Stack>
+          </Box>
         ) : (
-          <Fab onClick={onClick} color="primary" size="small">
-            <IconMenu2 width="16" />
-          </Fab>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Button
+              variant="outlined"
+              startIcon={<ArrowBack />}
+              onClick={() => router.back()}
+              size="small"
+            >
+              بازگشت
+            </Button>
+          </Stack>
         )}
         <Box>
           {/* <ProductSearch /> */}
@@ -89,18 +155,18 @@ const ProductList = ({ onClick }: Props) => {
           gap: 2,
         }}
       >
-        {getProducts.length > 0 ? (
+        {agents.length > 0 ? (
           <>
-            {getProducts.map((product) => (
+            {agents.map((agent) => (
               <Box
-                key={product.id}
+                key={agent.id}
                 sx={{
-                  width: { xs: "100%", sm: "50%", md: "33.33%", lg: "25%" },
+                  width: { xs: "100%", sm: "49%" },
                   p: 1,
                 }}
               >
                 {/* ------------------------------------------- */}
-                {/* Product Card */}
+                {/* Agent Card */}
                 {/* ------------------------------------------- */}
                 {isLoading ? (
                   <AgentBoxSkeleton />
@@ -109,6 +175,7 @@ const ProductList = ({ onClick }: Props) => {
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
+                      alignItems: "center",
                       border: "1px solid #e0e0e0",
                       p: 2,
                       borderRadius: 1,
@@ -116,20 +183,49 @@ const ProductList = ({ onClick }: Props) => {
                       minWidth: 300,
                     }}
                   >
-                    <Typography color="textPrimary" variant="h6">
-                      {product.title}
-                    </Typography>
-                    <Tooltip title="ویرایش">
-                      <Fab
-                        size="small"
-                        color="primary"
-                        onClick={() =>
-                          router.push(`/dashboard/agents/${product.id}`)
-                        }
+                    <Box sx={{ flex: 1 }}>
+                      <Typography color="textPrimary" variant="h6">
+                        {agent.name}
+                      </Typography>
+                      {agent.description && (
+                        <Typography
+                          color="textSecondary"
+                          variant="body2"
+                          sx={{ mt: 0.5 }}
+                        >
+                          {agent.description}
+                        </Typography>
+                      )}
+                      <Typography
+                        color="textSecondary"
+                        variant="caption"
+                        sx={{ mt: 1, display: "block" }}
                       >
-                        <Edit />
-                      </Fab>
-                    </Tooltip>
+                        وضعیت: {agent.status}
+                      </Typography>
+                    </Box>
+                    <Box sx={{ display: "flex", gap: 1 }}>
+                      <Tooltip title="ویرایش">
+                        <Fab
+                          size="small"
+                          color="primary"
+                          onClick={() =>
+                            router.push(`/dashboard/agents/${agent.id}`)
+                          }
+                        >
+                          <Edit />
+                        </Fab>
+                      </Tooltip>
+                      <Tooltip title="حذف">
+                        <Fab
+                          size="small"
+                          color="error"
+                          onClick={() => handleDeleteAgent(agent.id)}
+                        >
+                          <DeleteOutlineOutlined />
+                        </Fab>
+                      </Tooltip>
+                    </Box>
                   </Box>
                 )}
               </Box>
@@ -137,15 +233,15 @@ const ProductList = ({ onClick }: Props) => {
           </>
         ) : (
           <Box sx={{ width: "100%", textAlign: "center", mt: 6 }}>
-            <Typography variant="h2">There is no Product</Typography>
+            <Typography variant="h2">هیچ عاملی وجود ندارد</Typography>
             <Typography variant="h6" mb={3}>
-              The Product you are searching is no longer available.
+              هنوز عاملی ایجاد نکرده‌اید. برای شروع، یک عامل جدید ایجاد کنید.
             </Typography>
             <Button
               variant="contained"
-              //   onClick={() => dispatch(filterReset())}
+              onClick={() => setShowCreateAgent(true)}
             >
-              Try Again
+              ایجاد عامل جدید
             </Button>
           </Box>
         )}
@@ -156,10 +252,10 @@ const ProductList = ({ onClick }: Props) => {
         setShowCreateAgent={setShowCreateAgent}
         newAgent={newAgent}
         setNewAgent={setNewAgent}
-        handleCreateAgent={() => {}}
+        handleCreateAgent={handleCreateAgent}
       />
     </Box>
   );
 };
 
-export default ProductList;
+export default Agents;

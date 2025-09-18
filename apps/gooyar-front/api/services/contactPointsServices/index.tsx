@@ -230,6 +230,57 @@ export const checkTelegramConnectionService = async (id: string) => {
   } catch (error) {}
 };
 
+export const sendTelegramCodeService = async (phoneNumber: string) => {
+  try {
+    const response = await api({
+      method: axiosMethods.post,
+      url: `${apiVersion1}/telegram/send-code`,
+      data: { phoneNumber },
+      isAuthorizationNeeded: true,
+    });
+    return response;
+  } catch (error) {}
+};
+
+export const verifyTelegramCodeService = async (verificationCode: string) => {
+  try {
+    const response = await api({
+      method: axiosMethods.post,
+      url: `${apiVersion1}/telegram/verify-code`,
+      data: { verificationCode },
+      isAuthorizationNeeded: true,
+    });
+    return response;
+  } catch (error) {}
+};
+
+export const sendWhatsAppCodeService = async (phoneNumber: string) => {
+  try {
+    const response = await api({
+      method: axiosMethods.post,
+      url: `${apiVersion1}/whatsapp/send-code`,
+      data: { phoneNumber },
+      isAuthorizationNeeded: true,
+    });
+    return response;
+  } catch (error) {}
+};
+
+export const verifyWhatsAppCodeService = async (
+  phoneNumber: string,
+  verificationCode: string
+) => {
+  try {
+    const response = await api({
+      method: axiosMethods.post,
+      url: `${apiVersion1}/whatsapp/verify-code`,
+      data: { phoneNumber, verificationCode },
+      isAuthorizationNeeded: true,
+    });
+    return response;
+  } catch (error) {}
+};
+
 // Instagram Services
 export const getInstagramAccountsService = async () => {
   try {

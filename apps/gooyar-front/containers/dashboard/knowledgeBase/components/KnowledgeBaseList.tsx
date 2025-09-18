@@ -30,7 +30,7 @@ interface KnowledgeBase {
 interface KnowledgeBaseListProps {
   knowledgeBases: KnowledgeBase[];
   selectedBase: KnowledgeBase | null;
-  onSelectBase: (base: KnowledgeBase) => void;
+  onSelectBase: any;
   onCreateNew: () => void;
 }
 
@@ -41,7 +41,15 @@ const KnowledgeBaseList: React.FC<KnowledgeBaseListProps> = ({
   onCreateNew,
 }) => {
   return (
-    <Box sx={{ maxWidth: 350, minWidth: 250, height: "100%", p: 3 }}>
+    <Box
+      sx={{
+        maxWidth: 350,
+        minWidth: 250,
+        height: "100%",
+        p: 3,
+        borderRight: "1px solid #e0e0e0",
+      }}
+    >
       <Box sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
           <Typography variant="h6" sx={{ flexGrow: 1, color: "text.primary" }}>
@@ -65,9 +73,10 @@ const KnowledgeBaseList: React.FC<KnowledgeBaseListProps> = ({
         <List sx={{ flexGrow: 1, overflow: "auto" }}>
           {knowledgeBases.map((base) => (
             <ListItem
+              component="button"
               key={base.id}
-              button
-              selected={selectedBase?.id === base.id}
+              // button
+              // selected={selectedBase?.id === base.id}
               onClick={() => onSelectBase(base)}
               sx={{
                 borderRadius: 1,

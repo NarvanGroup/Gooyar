@@ -50,17 +50,7 @@ import {
 } from "@mui/icons-material";
 import CustomCheckbox from "@/components/forms/theme-elements/CustomCheckbox";
 import CustomSwitch from "@/components/forms/theme-elements/CustomSwitch";
-
-interface KnowledgeBaseData {
-  id: string;
-  title: string;
-  type: string;
-  status: "completed" | "pending" | "failed";
-  syncTime: string;
-  characterCount: number;
-  url?: string;
-  notifications?: number;
-}
+import { KnowledgeBaseDataModel } from "@/api/services/knowledgeBaseServices/models";
 
 interface KnowledgeBase {
   id: string;
@@ -71,11 +61,11 @@ interface KnowledgeBase {
 
 interface DataManagementProps {
   selectedBase: KnowledgeBase | null;
-  knowledgeBaseData: KnowledgeBaseData[];
+  knowledgeBaseData: KnowledgeBaseDataModel[];
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onAddData: () => void;
-  onEditData: (data: KnowledgeBaseData) => void;
+  onEditData: (data: KnowledgeBaseDataModel) => void;
   onDeleteData: (id: string) => void;
   onSyncData: (id: string) => void;
 }
@@ -458,7 +448,7 @@ const DataManagement: React.FC<DataManagementProps> = ({
       </Button>
 
       {/* Enhanced Table */}
-      <Box>
+      <Box width="100%">
         <EnhancedTableToolbar
           numSelected={selected.length}
           search={search}

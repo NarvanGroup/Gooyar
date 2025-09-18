@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -11,22 +11,25 @@ import {
   MenuItem,
   Chip,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 
 import CustomFormLabel from "@/components/forms/theme-elements/CustomFormLabel";
 import CustomTextField from "@/components/forms/theme-elements/CustomTextField";
 import CustomSelect from "@/components/forms/theme-elements/CustomSelect";
+import { AgentModel } from "@/api/services/agentsServices/models";
 
 interface PromptTabProps {
-  agentId: string;
+  agent: AgentModel;
+  onSave: (data: Partial<AgentModel>) => Promise<void>;
+  saving: boolean;
 }
 
-const PromptTab: React.FC<PromptTabProps> = ({ agentId }) => {
+const PromptTab: React.FC<PromptTabProps> = ({ agent, onSave, saving }) => {
   const [promptData, setPromptData] = useState({
-    systemPrompt: "",
-    userPrompt: "",
-    contextPrompt: "",
-    promptType: "general",
+    prompt: agent.prompt || "",
+    "custom-greeting": agent["custom-greeting"] || "",
+    tone: agent.tone || "friendly",
   });
 
   const [promptTemplates] = useState([
@@ -36,6 +39,22 @@ const PromptTab: React.FC<PromptTabProps> = ({ agentId }) => {
     "Personal Assistant",
     "Educational Tutor",
   ]);
+
+  const tones = [
+    { value: "friendly", label: "دوستانه" },
+    { value: "professional", label: "حرفه‌ای" },
+    { value: "casual", label: "غیررسمی" },
+    { value: "formal", label: "رسمی" },
+  ];
+
+  // Update form data when agent changes
+  useEffect(() => {
+    setPromptData({
+      prompt: agent.prompt || "",
+      "custom-greeting": agent["custom-greeting"] || "",
+      tone: agent.tone || "friendly",
+    });
+  }, [agent]);
 
   const handlePromptChange = (field: string, value: string) => {
     setPromptData((prev) => ({
@@ -49,8 +68,12 @@ const PromptTab: React.FC<PromptTabProps> = ({ agentId }) => {
     console.log("Selected template:", template);
   };
 
-  const handleSave = () => {
-    console.log("Saving prompt data:", promptData);
+  const handleSave = async () => {
+    try {
+      await onSave(promptData);
+    } catch (error) {
+      console.error("Error saving prompt data:", error);
+    }
   };
 
   return (
@@ -67,77 +90,57 @@ const PromptTab: React.FC<PromptTabProps> = ({ agentId }) => {
 
               <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
                 <Box>
-                  <CustomFormLabel htmlFor="prompt-type">
-                    نوع پرامپت
-                  </CustomFormLabel>
+                  <CustomFormLabel htmlFor="tone">لحن عامل</CustomFormLabel>
                   <CustomSelect
-                    id="prompt-type"
-                    value={promptData.promptType}
-                    onChange={(e) =>
-                      handlePromptChange("promptType", e.target.value)
+                    id="tone"
+                    value={promptData.tone}
+                    onChange={(e: any) =>
+                      handlePromptChange("tone", e.target.value)
                     }
                     fullWidth
                     variant="outlined"
                   >
-                    <MenuItem value="general">عمومی</MenuItem>
-                    <MenuItem value="customer-service">خدمات مشتری</MenuItem>
-                    <MenuItem value="sales">فروش</MenuItem>
-                    <MenuItem value="technical">پشتیبانی فنی</MenuItem>
-                    <MenuItem value="educational">آموزشی</MenuItem>
+                    {tones.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
                   </CustomSelect>
                 </Box>
 
                 <Box>
-                  <CustomFormLabel htmlFor="system-prompt">
-                    پرامپت سیستم
+                  <CustomFormLabel htmlFor="custom-greeting">
+                    سلام سفارشی
                   </CustomFormLabel>
                   <CustomTextField
-                    id="system-prompt"
-                    fullWidth
-                    multiline
-                    rows={6}
-                    value={promptData.systemPrompt}
-                    onChange={(e) =>
-                      handlePromptChange("systemPrompt", e.target.value)
-                    }
-                    placeholder="پرامپت سیستم که نقش و رفتار عامل را تعریف می‌کند..."
-                    helperText="این پرامپت نقش، شخصیت و رفتار اصلی عامل را تعریف می‌کند"
-                  />
-                </Box>
-
-                <Box>
-                  <CustomFormLabel htmlFor="user-prompt">
-                    قالب پرامپت کاربر
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="user-prompt"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    value={promptData.userPrompt}
-                    onChange={(e) =>
-                      handlePromptChange("userPrompt", e.target.value)
-                    }
-                    placeholder="قالب تعاملات کاربر را وارد کنید..."
-                    helperText="این قالب نحوه پاسخ عامل به کاربران است"
-                  />
-                </Box>
-
-                <Box>
-                  <CustomFormLabel htmlFor="context-prompt">
-                    پرامپت زمینه
-                  </CustomFormLabel>
-                  <CustomTextField
-                    id="context-prompt"
+                    id="custom-greeting"
                     fullWidth
                     multiline
                     rows={3}
-                    value={promptData.contextPrompt}
-                    onChange={(e) =>
-                      handlePromptChange("contextPrompt", e.target.value)
+                    value={promptData["custom-greeting"]}
+                    onChange={(e: any) =>
+                      handlePromptChange("custom-greeting", e.target.value)
                     }
-                    placeholder="زمینه یا دستورالعمل‌های اضافی را وارد کنید..."
-                    helperText="زمینه اضافی یا دستورالعمل‌های خاص برای عامل"
+                    placeholder="سلام سفارشی عامل را وارد کنید..."
+                    helperText="این پیام در ابتدای هر گفتگو نمایش داده می‌شود"
+                  />
+                </Box>
+
+                <Box>
+                  <CustomFormLabel htmlFor="main-prompt">
+                    پرامپت اصلی
+                  </CustomFormLabel>
+                  <CustomTextField
+                    id="main-prompt"
+                    fullWidth
+                    multiline
+                    rows={8}
+                    value={promptData.prompt}
+                    onChange={(e: any) =>
+                      handlePromptChange("prompt", e.target.value)
+                    }
+                    placeholder="پرامپت اصلی عامل را وارد کنید..."
+                    helperText="این پرامپت نقش، شخصیت و رفتار اصلی عامل را تعریف می‌کند"
                   />
                 </Box>
 
@@ -147,8 +150,10 @@ const PromptTab: React.FC<PromptTabProps> = ({ agentId }) => {
                     color="primary"
                     size="large"
                     onClick={handleSave}
+                    disabled={saving}
+                    startIcon={saving ? <CircularProgress size={20} /> : null}
                   >
-                    ذخیره پرامپت
+                    {saving ? "در حال ذخیره..." : "ذخیره پرامپت"}
                   </Button>
                 </Box>
               </Box>

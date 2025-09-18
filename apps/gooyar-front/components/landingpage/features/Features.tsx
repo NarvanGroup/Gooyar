@@ -151,7 +151,7 @@ const Features = () => {
           <Box mt={6}>
             <Grid container spacing={3}>
               {featuresData.map((feature, index) => (
-                <Grid item xs={12} sm={4} lg={3} textAlign="center" key={index}>
+                <Grid size={{ xs: 12, sm: 4, lg: 3 }} textAlign="center" key={index}>
                   <Box color="primary.main">{feature.icon}</Box>
                   <Typography variant="h5" mt={3}>
                     {feature.title}

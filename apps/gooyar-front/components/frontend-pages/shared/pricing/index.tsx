@@ -155,7 +155,7 @@ const Pricing = () => {
             alignItems="center"
             justifyContent="center"
           >
-            <Grid item xs={12} lg={7}>
+            <Grid size={{ xs: 12, lg: 7 }}>
               <Typography
                 textAlign="center"
                 variant="h4"
@@ -175,7 +175,7 @@ const Pricing = () => {
           </Grid>
 
           <Grid container spacing={3} justifyContent="center" mt={3}>
-            <Grid item xs={12} sm={10} lg={8} textAlign="center">
+            <Grid size={{ xs: 12, sm: 10, lg: 8 }} textAlign="center">
               {/* <Typography variant="h2">
                 Flexible Plans Tailored to Fit Your Community&apos;s Unique
                 Needs!
@@ -196,7 +196,7 @@ const Pricing = () => {
           </Grid>
           <Grid container spacing={3} mt={5}>
             {pricing.map((price, i) => (
-              <Grid item xs={12} lg={4} sm={6} key={i}>
+              <Grid size={{ xs: 12, lg: 4, sm: 6 }} key={i}>
                 <BlankCard>
                   <CardContent sx={{ p: "30px" }}>
                     {price.badge ? (

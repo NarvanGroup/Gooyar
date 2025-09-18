@@ -214,7 +214,7 @@ const DemoSlider = () => {
         <Box mt={9}>
           <Grid container mt={2} spacing={3}>
             {demos.map((demo, index) => (
-              <Grid item xs={12} lg={3} key={index}>
+              <Grid size={{ xs: 12, lg: 3 }} key={index}>
                 <Box>
                   <StyledBox>
                     <Image
@@ -257,7 +257,7 @@ const DemoSlider = () => {
         <Box>
           <Grid container mt={2} spacing={3}>
             {pages.map((page, index) => (
-              <Grid item xs={12} lg={3} key={index}>
+              <Grid size={{ xs: 12, lg: 3 }} key={index}>
                 <Box>
                   <StyledBox>
                     <Image
@@ -305,7 +305,7 @@ const DemoSlider = () => {
         <Box>
           <Grid container mt={2} spacing={3}>
             {apps.map((app, index) => (
-              <Grid item xs={12} lg={3} key={index}>
+              <Grid size={{ xs: 12, lg: 3 }} key={index}>
                 <Box>
                   <StyledBox>
                     <Image

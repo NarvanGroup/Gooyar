@@ -18,7 +18,7 @@ export default function Banner1() {
                     tag="span"
                     options={{
                       wrapperClassName: "ah-words-wrapper",
-                      strings: ["گویار پاسخگوی شماست"],
+                      strings: ["کانورا پاسخگوی شماست"],
                       autoStart: true,
                       loop: true,
                     }}
@@ -26,7 +26,7 @@ export default function Banner1() {
                 </h2>
                 <h2 className="title d-none wow fadeInUp" data-wow-delay=".2s">
                   پشتیبانی هوشمند، ساده‌تر از همیشه{" "}
-                  <span>گویار پاسخگوی شماست</span>
+                  <span>کانورا پاسخگوی شماست</span>
                 </h2>
                 <p className="wow fadeInUp" data-wow-delay=".4s">
                   یک دستیار هوش مصنوعی قدرتمند برای کسب‌وکار شما؛ آماده برای
@@ -45,7 +45,7 @@ export default function Banner1() {
                     className="gradient-btn gradient-btn-two wow fadeInRight"
                     data-wow-delay=".6s"
                   >
-                    گویار چگونه کار میکند؟
+                    کانورا چگونه کار میکند؟
                   </Link>
                 </div>
               </div>

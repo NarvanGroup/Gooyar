@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -23,6 +23,7 @@ import {
   Chip,
   Stack,
   Divider,
+  CircularProgress,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -31,130 +32,108 @@ import {
   PlayArrow as PlayIcon,
   Stop as StopIcon,
 } from "@mui/icons-material";
-
-interface Action {
-  id: string;
-  name: string;
-  type: string;
-  description: string;
-  isActive: boolean;
-  parameters: Record<string, any>;
-}
+import { AgentModel, AgentAction } from "@/api/services/agentsServices/models";
 
 interface ActionsTabProps {
-  agentId: string;
+  agent: AgentModel;
+  onSave: (data: Partial<AgentModel>) => Promise<void>;
+  saving: boolean;
 }
 
-const ActionsTab: React.FC<ActionsTabProps> = ({ agentId }) => {
-  const [actions, setActions] = useState<Action[]>([
-    {
-      id: "1",
-      name: "Send Email",
-      type: "email",
-      description: "Send automated email responses",
-      isActive: true,
-      parameters: { template: "default", delay: 0 },
-    },
-    {
-      id: "2",
-      name: "Create Ticket",
-      type: "ticket",
-      description: "Create support tickets automatically",
-      isActive: true,
-      parameters: { priority: "medium", category: "general" },
-    },
-    {
-      id: "3",
-      name: "Database Query",
-      type: "database",
-      description: "Query customer database",
-      isActive: false,
-      parameters: { table: "customers", limit: 10 },
-    },
-  ]);
-
+const ActionsTab: React.FC<ActionsTabProps> = ({ agent, onSave, saving }) => {
+  const [actions, setActions] = useState<AgentAction[]>(agent.actions || []);
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingAction, setEditingAction] = useState<Action | null>(null);
-  const [newAction, setNewAction] = useState({
-    name: "",
-    type: "",
-    description: "",
-    parameters: {},
+  const [editingAction, setEditingAction] = useState<AgentAction | null>(null);
+  const [newAction, setNewAction] = useState<AgentAction>({
+    type: "send-email",
+    url: "",
+    "notification-type": "",
   });
 
+  // Update actions when agent changes
+  useEffect(() => {
+    setActions(agent.actions || []);
+  }, [agent]);
+
   const actionTypes = [
+    { value: "send-sms", label: "ارسال پیامک" },
+    { value: "webhook", label: "Webhook" },
+    { value: "schedule", label: "زمان‌بندی" },
+    { value: "send-email", label: "ارسال ایمیل" },
+    { value: "send-notification", label: "ارسال اعلان" },
+    { value: "end-convo", label: "پایان گفتگو" },
+  ];
+
+  const notificationTypes = [
+    { value: "push", label: "Push Notification" },
     { value: "email", label: "Email" },
-    { value: "ticket", label: "Ticket" },
-    { value: "database", label: "Database" },
-    { value: "api", label: "API Call" },
-    { value: "notification", label: "Notification" },
+    { value: "sms", label: "SMS" },
+    { value: "in-app", label: "In-App" },
   ];
 
   const handleAddAction = () => {
     setEditingAction(null);
     setNewAction({
-      name: "",
-      type: "",
-      description: "",
-      parameters: {},
+      type: "send-email",
+      url: "",
+      "notification-type": "",
     });
     setOpenDialog(true);
   };
 
-  const handleEditAction = (action: Action) => {
+  const handleEditAction = (action: AgentAction, index: number) => {
     setEditingAction(action);
-    setNewAction({
-      name: action.name,
-      type: action.type,
-      description: action.description,
-      parameters: action.parameters,
-    });
+    setNewAction({ ...action });
     setOpenDialog(true);
   };
 
-  const handleDeleteAction = (actionId: string) => {
-    setActions(actions.filter((action) => action.id !== actionId));
-  };
-
-  const handleToggleAction = (actionId: string) => {
-    setActions(
-      actions.map((action) =>
-        action.id === actionId
-          ? { ...action, isActive: !action.isActive }
-          : action
-      )
-    );
+  const handleDeleteAction = (index: number) => {
+    const newActions = actions.filter((_, i) => i !== index);
+    setActions(newActions);
+    handleSaveActions(newActions);
   };
 
   const handleSaveAction = () => {
+    let newActions: AgentAction[];
+
     if (editingAction) {
       // Update existing action
-      setActions(
-        actions.map((action) =>
-          action.id === editingAction.id ? { ...action, ...newAction } : action
-        )
-      );
+      const index = actions.findIndex((action) => action === editingAction);
+      newActions = [...actions];
+      newActions[index] = newAction;
     } else {
       // Add new action
-      const newActionWithId = {
-        ...newAction,
-        id: Date.now().toString(),
-        isActive: true,
-      };
-      setActions([...actions, newActionWithId]);
+      newActions = [...actions, newAction];
     }
+
+    setActions(newActions);
     setOpenDialog(false);
+    handleSaveActions(newActions);
+  };
+
+  const handleSaveActions = async (actionsToSave: AgentAction[]) => {
+    try {
+      await onSave({ actions: actionsToSave });
+    } catch (error) {
+      console.error("Error saving actions:", error);
+    }
   };
 
   const getActionTypeColor = (type: string) => {
     const colors: Record<string, string> = {
-      email: "primary",
-      ticket: "secondary",
-      database: "info",
-      api: "warning",
-      notification: "success",
+      "send-sms": "primary",
+      webhook: "secondary",
+      schedule: "info",
+      "send-email": "warning",
+      "send-notification": "success",
+      "end-convo": "error",
     };
     return colors[type] || "default";
+  };
+
+  const getActionTypeLabel = (type: string) => {
+    const typeObj = actionTypes.find((t) => t.value === type);
+    return typeObj ? typeObj.label : type;
   };
 
   return (
@@ -180,8 +159,8 @@ const ActionsTab: React.FC<ActionsTabProps> = ({ agentId }) => {
       </Box>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-        {actions.map((action) => (
-          <Box key={action.id} sx={{ flex: "1 1 300px", minWidth: 0 }}>
+        {actions.map((action, index) => (
+          <Box key={index} sx={{ flex: "1 1 300px", minWidth: 0 }}>
             <Card>
               <CardContent>
                 <Box
@@ -193,57 +172,41 @@ const ActionsTab: React.FC<ActionsTabProps> = ({ agentId }) => {
                 >
                   <Box>
                     <Typography variant="h6" gutterBottom>
-                      {action.name}
+                      {getActionTypeLabel(action.type)}
                     </Typography>
                     <Chip
-                      label={action.type}
+                      label={getActionTypeLabel(action.type)}
                       color={getActionTypeColor(action.type) as any}
                       size="small"
                       sx={{ mb: 1 }}
                     />
-                    <Typography variant="body2" color="textSecondary">
-                      {action.description}
-                    </Typography>
+                    {action.url && (
+                      <Typography variant="body2" color="textSecondary">
+                        URL: {action.url}
+                      </Typography>
+                    )}
+                    {action["notification-type"] && (
+                      <Typography variant="body2" color="textSecondary">
+                        نوع اعلان: {action["notification-type"]}
+                      </Typography>
+                    )}
                   </Box>
                   <Box>
                     <IconButton
                       size="small"
-                      onClick={() => handleToggleAction(action.id)}
-                      color={action.isActive ? "success" : "default"}
-                    >
-                      {action.isActive ? <PlayIcon /> : <StopIcon />}
-                    </IconButton>
-                    <IconButton
-                      size="small"
-                      onClick={() => handleEditAction(action)}
+                      onClick={() => handleEditAction(action, index)}
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
                       size="small"
                       color="error"
-                      onClick={() => handleDeleteAction(action.id)}
+                      onClick={() => handleDeleteAction(index)}
                     >
                       <DeleteIcon />
                     </IconButton>
                   </Box>
                 </Box>
-
-                <Divider sx={{ my: 2 }} />
-
-                <Typography variant="subtitle2" gutterBottom>
-                  پارامترها:
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap">
-                  {Object.entries(action.parameters).map(([key, value]) => (
-                    <Chip
-                      key={key}
-                      label={`${key}: ${value}`}
-                      size="small"
-                      variant="outlined"
-                    />
-                  ))}
-                </Stack>
               </CardContent>
             </Card>
           </Box>
@@ -263,23 +226,13 @@ const ActionsTab: React.FC<ActionsTabProps> = ({ agentId }) => {
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
             <Box>
-              <TextField
-                fullWidth
-                label="نام عملیات"
-                value={newAction.name}
-                onChange={(e) =>
-                  setNewAction({ ...newAction, name: e.target.value })
-                }
-              />
-            </Box>
-            <Box>
               <FormControl fullWidth>
                 <InputLabel>نوع عملیات</InputLabel>
                 <Select
                   value={newAction.type}
                   label="نوع عملیات"
                   onChange={(e) =>
-                    setNewAction({ ...newAction, type: e.target.value })
+                    setNewAction({ ...newAction, type: e.target.value as any })
                   }
                 >
                   {actionTypes.map((type) => (
@@ -290,23 +243,55 @@ const ActionsTab: React.FC<ActionsTabProps> = ({ agentId }) => {
                 </Select>
               </FormControl>
             </Box>
-            <Box>
-              <TextField
-                fullWidth
-                label="توضیحات"
-                multiline
-                rows={3}
-                value={newAction.description}
-                onChange={(e) =>
-                  setNewAction({ ...newAction, description: e.target.value })
-                }
-              />
-            </Box>
+            {(newAction.type === "webhook" ||
+              newAction.type === "send-email") && (
+              <Box>
+                <TextField
+                  fullWidth
+                  label="URL"
+                  value={newAction.url || ""}
+                  onChange={(e) =>
+                    setNewAction({ ...newAction, url: e.target.value })
+                  }
+                  placeholder="آدرس URL را وارد کنید..."
+                />
+              </Box>
+            )}
+            {newAction.type === "send-notification" && (
+              <Box>
+                <FormControl fullWidth>
+                  <InputLabel>نوع اعلان</InputLabel>
+                  <Select
+                    value={newAction["notification-type"] || ""}
+                    label="نوع اعلان"
+                    onChange={(e) =>
+                      setNewAction({
+                        ...newAction,
+                        "notification-type": e.target.value,
+                      })
+                    }
+                  >
+                    {notificationTypes.map((type) => (
+                      <MenuItem key={type.value} value={type.value}>
+                        {type.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>انصراف</Button>
-          <Button onClick={handleSaveAction} variant="contained">
+          <Button onClick={() => setOpenDialog(false)} disabled={saving}>
+            انصراف
+          </Button>
+          <Button
+            onClick={handleSaveAction}
+            variant="contained"
+            disabled={saving}
+            startIcon={saving ? <CircularProgress size={20} /> : null}
+          >
             {editingAction ? "بروزرسانی" : "افزودن"}
           </Button>
         </DialogActions>

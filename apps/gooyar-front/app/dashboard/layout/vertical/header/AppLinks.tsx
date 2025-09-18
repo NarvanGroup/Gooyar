@@ -1,13 +1,13 @@
-import { Avatar, Box, Typography, Grid, Stack } from '@mui/material';
-import * as dropdownData from './data';
-import Link from 'next/link';
-import React from 'react';
+import { Avatar, Box, Typography, Grid, Stack } from "@mui/material";
+import * as dropdownData from "./data";
+import Link from "next/link";
+import React from "react";
 
 const AppLinks = () => {
   return (
     <Grid container spacing={3} mb={4}>
       {dropdownData.appsLink.map((links, index) => (
-        <Grid item lg={6} key={index}>
+        <Grid size={{ lg: 6 }} key={index}>
           <Link href={links.href} className="hover-text-primary">
             <Stack direction="row" spacing={2}>
               <Box
@@ -36,7 +36,7 @@ const AppLinks = () => {
                   noWrap
                   className="text-hover"
                   sx={{
-                    width: '240px',
+                    width: "240px",
                   }}
                 >
                   {links.title}
@@ -46,7 +46,7 @@ const AppLinks = () => {
                   variant="subtitle2"
                   fontSize="12px"
                   sx={{
-                    width: '240px',
+                    width: "240px",
                   }}
                   noWrap
                 >

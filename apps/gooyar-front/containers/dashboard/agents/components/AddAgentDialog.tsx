@@ -31,7 +31,13 @@ export default function AddAgentDialog({
       <DialogTitle sx={{ color: "text.primary" }}>ایجاد عامل جدید</DialogTitle>
       <DialogContent>
         <Box sx={{ mt: 1, display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField fullWidth label="نام عامل" required />
+          <TextField
+            fullWidth
+            label="نام عامل"
+            required
+            value={newAgent.name}
+            onChange={(e) => setNewAgent({ ...newAgent, name: e.target.value })}
+          />
           <TextField
             fullWidth
             multiline

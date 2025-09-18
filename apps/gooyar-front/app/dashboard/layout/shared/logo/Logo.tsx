@@ -23,14 +23,14 @@ const Logo = () => {
         />
       ) : (
         <Image
-          src="/images/logos/shenasbanLogo.png"
+          src="/assets/img/logo/logo.png"
           alt="logo"
           // height={isMdUp ? 40 : 35}
           // width={isMdUp ? 150 : 100}
           width={0}
           height={0}
           sizes="100vw"
-          style={{ width: 150, height: "auto" }}
+          style={{ width: 80, height: "auto" }}
           priority
         />
       )}

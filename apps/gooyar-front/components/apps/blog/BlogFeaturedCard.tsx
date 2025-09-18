@@ -56,15 +56,7 @@ const BlogFeaturedCard = ({ post, index }: Btype) => {
   return (
     <>
       {post ? (
-        <Grid
-          item
-          xs={12}
-          lg={mainPost ? 8 : 4}
-          md={12}
-          sm={12}
-          display="flex"
-          alignItems="stretch"
-        >
+        <Grid size={{ xs: 12, lg: mainPost ? 8 : 4, md: 12, sm: 12 }} display="flex" alignItems="stretch">
           <CoverImgBg className="hoverCard">
             <>
               <Typography

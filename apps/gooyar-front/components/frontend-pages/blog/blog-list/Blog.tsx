@@ -16,16 +16,7 @@ const BlogList = () => {
     >
       <Grid container spacing={3}>
         {posts.map((blog: any, i: number) => (
-          <Grid
-            item
-            xs={12}
-            lg={4}
-            md={4}
-            sm={6}
-            display="flex"
-            alignItems="stretch"
-            key={i}
-          >
+          <Grid size={{ xs: 12, lg: 4, md: 4, sm: 6 }} display="flex" alignItems="stretch" key={i}>
             <BlogCard blog={blog} />
           </Grid>
         ))}

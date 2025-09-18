@@ -45,7 +45,7 @@ const TabTeamScheduling = () => {
 
   return (
     <Grid container spacing={{ xs: 3, lg: 8 }}>
-      <Grid item xs={12} lg={6}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <Image
           src="/images/frontend-pages/homepage/accordian1.jpg"
           width={500}
@@ -57,7 +57,7 @@ const TabTeamScheduling = () => {
           alt="img"
         />
       </Grid>
-      <Grid item xs={12} lg={6}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <Typography
           variant="h4"
           sx={{

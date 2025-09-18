@@ -19,7 +19,7 @@ const ChipCommon = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item xs={12} display="flex" alignItems="stretch">
+      <Grid size={{ xs: 12 }} display="flex" alignItems="stretch">
         <ChildCard title="Filled" codeModel={<FilledCode />}>
           <InlineItemCard>
             <Chip avatar={<Avatar>M</Avatar>} label="Default Filled" />
@@ -98,7 +98,7 @@ const ChipCommon = () => {
           </InlineItemCard>
         </ChildCard>
       </Grid>
-      <Grid item xs={12} display="flex" alignItems="stretch">
+      <Grid size={{ xs: 12 }} display="flex" alignItems="stretch">
         <ChildCard title="Outlined" codeModel={<OutlinedCode />}>
           <InlineItemCard>
             <Chip
@@ -192,7 +192,7 @@ const ChipCommon = () => {
           </InlineItemCard>
         </ChildCard>
       </Grid>
-      <Grid item xs={12} sm={6} display="flex" alignItems="stretch">
+      <Grid size={{ xs: 12, sm: 6 }} display="flex" alignItems="stretch">
         <ChildCard title="Custom Icon" codeModel={<CustomIconCode />}>
           <InlineItemCard>
             <Chip
@@ -212,7 +212,7 @@ const ChipCommon = () => {
           </InlineItemCard>
         </ChildCard>
       </Grid>
-      <Grid item xs={12} sm={6} display="flex" alignItems="stretch">
+      <Grid size={{ xs: 12, sm: 6 }} display="flex" alignItems="stretch">
         <ChildCard
           title="Custom outlined Icon"
           codeModel={<CustomOutlinedIcon />}
@@ -237,7 +237,7 @@ const ChipCommon = () => {
           </InlineItemCard>
         </ChildCard>
       </Grid>
-      <Grid item xs={12} sm={6} display="flex" alignItems="stretch">
+      <Grid size={{ xs: 12, sm: 6 }} display="flex" alignItems="stretch">
         <ChildCard title="Disabled" codeModel={<DisabledCode />}>
           <InlineItemCard>
             <Chip
@@ -256,7 +256,7 @@ const ChipCommon = () => {
           </InlineItemCard>
         </ChildCard>
       </Grid>
-      <Grid item xs={12} sm={6} display="flex" alignItems="stretch">
+      <Grid size={{ xs: 12, sm: 6 }} display="flex" alignItems="stretch">
         <ChildCard title="Sizes" codeModel={<SizesCode />}>
           <InlineItemCard>
             <Chip label="Small" size="small" color="primary" />

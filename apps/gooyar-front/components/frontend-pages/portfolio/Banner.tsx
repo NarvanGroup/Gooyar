@@ -18,7 +18,7 @@ const Banner = () => {
             }}>
                 <Container maxWidth="lg">
                     <Grid container spacing={3} justifyContent="center">
-                        <Grid item xs={12} lg={8} alignItems="center" textAlign="center">
+                        <Grid size={{ xs: 12, lg: 8 }} alignItems="center" textAlign="center">
                             <Typography color="primary.main" textTransform="uppercase" fontSize="13px">Portfolio</Typography>
                             <Typography variant="h1" mb={3} lineHeight={1.4} fontWeight={700} sx={{
                                 fontSize: {

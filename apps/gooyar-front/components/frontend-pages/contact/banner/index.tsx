@@ -21,7 +21,11 @@ const Banner = () => {
       >
         <Container maxWidth="lg">
           <Grid container spacing={3} justifyContent="center">
-            <Grid item xs={12} lg={8} alignItems="center" textAlign="center">
+            <Grid
+              size={{ xs: 12, lg: 8 }}
+              alignItems="center"
+              textAlign="center"
+            >
               <Typography
                 color="primary.main"
                 textTransform="uppercase"

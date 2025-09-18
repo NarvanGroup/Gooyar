@@ -9,23 +9,13 @@ import {
   TextField,
   Grid,
 } from "@mui/material";
-
-interface KnowledgeBaseData {
-  id: string;
-  title: string;
-  type: string;
-  status: "completed" | "pending" | "failed";
-  syncTime: string;
-  characterCount: number;
-  url?: string;
-  notifications?: number;
-}
+import { KnowledgeBaseDataModel } from "@/api/services/knowledgeBaseServices/models";
 
 interface EditDataDialogProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: KnowledgeBaseData) => void;
-  editingData: KnowledgeBaseData | null;
+  onSubmit: (data: KnowledgeBaseDataModel) => void;
+  editingData: KnowledgeBaseDataModel | null;
 }
 
 const EditDataDialog: React.FC<EditDataDialogProps> = ({
@@ -34,7 +24,7 @@ const EditDataDialog: React.FC<EditDataDialogProps> = ({
   onSubmit,
   editingData,
 }) => {
-  const [formData, setFormData] = useState<Partial<KnowledgeBaseData>>({});
+  const [formData, setFormData] = useState<Partial<KnowledgeBaseDataModel>>({});
 
   useEffect(() => {
     if (editingData) {
@@ -68,7 +58,7 @@ const EditDataDialog: React.FC<EditDataDialogProps> = ({
       <DialogTitle>ویرایش داده</DialogTitle>
       <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>
-          <Grid item xs={12}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               fullWidth
               label="عنوان"
@@ -80,7 +70,7 @@ const EditDataDialog: React.FC<EditDataDialogProps> = ({
             />
           </Grid>
           {editingData.url && (
-            <Grid item xs={12}>
+            <Grid size={{ xs: 12 }}>
               <TextField
                 fullWidth
                 label="آدرس وب‌سایت"

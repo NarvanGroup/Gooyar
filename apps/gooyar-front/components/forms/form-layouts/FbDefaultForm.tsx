@@ -116,7 +116,7 @@ const FbDefaultForm = () => {
           fullWidth
         />
         <Grid container spacing={0} my={2}>
-          <Grid item lg={4} md={6} sm={12}>
+          <Grid size={{ lg: 4, md: 6, sm: 12 }}>
             <FormControlLabel
               control={
                 <CustomCheckbox
@@ -151,7 +151,7 @@ const FbDefaultForm = () => {
               label="Check this custom checkbox"
             />
           </Grid>
-          <Grid item lg={4} md={6} sm={12}>
+          <Grid size={{ lg: 4, md: 6, sm: 12 }}>
             <FormControl component="fieldset">
               <RadioGroup
                 aria-label="gender"

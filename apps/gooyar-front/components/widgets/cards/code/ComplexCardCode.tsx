@@ -57,7 +57,7 @@ const ComplexCard = () => {
   return (
       <Grid container spacing={3}>
         {complexCard.map((author, index) => (
-          <Grid item xs={12} sm={4} key={index}>
+          <Grid size={{ xs: 12, sm: 4 }} key={index}>
             <Card>
               <>
                 <Typography component={Link} href="/">

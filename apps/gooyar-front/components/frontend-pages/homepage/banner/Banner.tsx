@@ -75,7 +75,7 @@ const Banner = () => {
       >
         <Grid container spacing={3} justifyContent="center" mb={4}>
           {lgUp ? (
-            <Grid item xs={12} lg={2} alignItems="end" display="flex">
+            <Grid size={{ xs: 12, lg: 2 }} alignItems="end" display="flex">
               <Image
                 src="/images/svgs/undraw_vault.svg"
                 className="animted-img-2"
@@ -94,7 +94,7 @@ const Banner = () => {
             </Grid>
           ) : null}
 
-          <Grid item xs={12} lg={7} textAlign="center">
+          <Grid size={{ xs: 12, lg: 7 }} textAlign="center">
             <Typography
               variant="h1"
               fontWeight={700}
@@ -289,7 +289,7 @@ const Banner = () => {
             </Stack>
           </Grid>
           {lgUp ? (
-            <Grid item xs={12} lg={2} alignItems="end" display="flex">
+            <Grid size={{ xs: 12, lg: 2 }} alignItems="end" display="flex">
               <Image
                 src="/images/svgs/undraw_security_on.svg"
                 className="animted-img-2"

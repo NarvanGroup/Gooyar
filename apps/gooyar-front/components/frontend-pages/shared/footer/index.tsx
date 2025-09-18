@@ -148,7 +148,7 @@ const Footer = () => {
       >
         <Grid container spacing={3} justifyContent="space-between" mb={7}>
           {footerLinks.map((footerlink, i) => (
-            <Grid item xs={6} sm={4} lg={2} key={i}>
+            <Grid size={{ xs: 6, sm: 4, lg: 2 }} key={i}>
               {footerlink.children.map((child, i) => (
                 <React.Fragment key={i}>
                   {child.title ? (
@@ -178,7 +178,7 @@ const Footer = () => {
             </Grid>
           ))}
 
-          <Grid item xs={6} sm={6} lg={2}>
+          <Grid size={{ xs: 6, sm: 6, lg: 2 }}>
             <Image
               src="/images/setad.png"
               width={160}
@@ -187,7 +187,7 @@ const Footer = () => {
             />
           </Grid>
 
-          <Grid item xs={6} sm={6} lg={2}>
+          <Grid size={{ xs: 6, sm: 6, lg: 2 }}>
             <Image
               src="/images/nezam-senfi.png"
               width={160}
@@ -196,7 +196,7 @@ const Footer = () => {
             />
           </Grid>
 
-          <Grid item xs={6} sm={6} lg={2}>
+          <Grid size={{ xs: 6, sm: 6, lg: 2 }}>
             <a
               referrerPolicy="origin"
               target="_blank"
@@ -214,7 +214,7 @@ const Footer = () => {
               />
             </a>
           </Grid>
-          <Grid item xs={6} sm={6} lg={2}>
+          <Grid size={{ xs: 6, sm: 6, lg: 2 }}>
             <a
               referrerPolicy="origin"
               target="_blank"
@@ -223,7 +223,7 @@ const Footer = () => {
               <Image src="/enamad.png" width={160} height={130} alt="enamad" />
             </a>
           </Grid>
-          <Grid item xs={6} sm={6} lg={2}>
+          <Grid size={{ xs: 6, sm: 6, lg: 2 }}>
             <Typography fontSize="17px" fontWeight="600" mb="22px">
               ما را در شبکه های اجتماعی دنبال کنید
             </Typography>

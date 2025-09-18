@@ -17,7 +17,7 @@ const Leadership = () => {
             }}>
                 <Container maxWidth="lg">
                     <Grid container spacing={3} alignItems="center" mb={6}>
-                        <Grid item xs={12} lg={5} sm={8}>
+                        <Grid size={{ xs: 12, lg: 5, sm: 8 }}>
                             <Typography variant="h4" mb={3} sx={{
                                 fontSize: {
                                     lg: '40px',

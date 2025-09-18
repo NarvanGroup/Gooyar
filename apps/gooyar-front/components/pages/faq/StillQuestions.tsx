@@ -11,7 +11,7 @@ import React from "react";
 const StillQuestions = () => {
   return (
     <Grid container spacing={3} justifyContent="center">
-      <Grid item xs={12} lg={10}>
+      <Grid size={{ xs: 12, lg: 10 }}>
         <Box bgcolor="primary.light" p={5} mt={7}>
           <Stack>
             <AvatarGroup

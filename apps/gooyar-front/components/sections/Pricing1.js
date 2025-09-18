@@ -12,7 +12,7 @@ export default function Pricing1() {
             <div className="col-lg-12">
               <div className="section-title text-center mb-50">
                 <h2 className="title title-animation">
-                  گویار هزینه نیست، <span>سرمایه‌گذاریه</span>
+                  کانورا هزینه نیست، <span>سرمایه‌گذاریه</span>
                 </h2>
               </div>
             </div>

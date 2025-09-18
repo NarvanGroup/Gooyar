@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Button,
   TextField,
@@ -17,7 +15,6 @@ import {
   Alert,
   CircularProgress,
   Grid,
-  Link,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -214,89 +211,105 @@ export default function InstagramAccounts() {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} pb={3}>
           {instagramAccounts.map((account) => (
-            <Grid item xs={12} sm={6} md={4} key={account.id}>
-              <Card>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h6">
-                        {account.account_name || `@${account.username}`}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        @{account.username}
-                      </Typography>
-                      <Box sx={{ mt: 1 }}>
-                        {account.is_connected ? (
-                          <Chip
-                            icon={<CheckCircleIcon />}
-                            label="Connected"
-                            color="success"
-                            size="small"
-                          />
-                        ) : (
-                          <Chip
-                            icon={<CancelIcon />}
-                            label="Not Connected"
-                            color="error"
-                            size="small"
-                          />
-                        )}
-                      </Box>
-                    </Box>
-                    <Box>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleOpenDialog(account)}
-                        color="primary"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(account.id!)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={account.id}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  border: "1px solid #e0e0e0",
+                  p: 2,
+                  borderRadius: 1,
+                  width: "100%",
+                  minWidth: 300,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h6" color="textPrimary">
+                      {account.account_name || `@${account.username}`}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      @{account.username}
+                    </Typography>
+                    <Box sx={{ mt: 1 }}>
+                      {account.is_connected ? (
+                        <Chip
+                          icon={<CheckCircleIcon />}
+                          label="متصل"
+                          color="success"
+                          size="small"
+                        />
+                      ) : (
+                        <Chip
+                          icon={<CancelIcon />}
+                          label="متصل نیست"
+                          color="error"
+                          size="small"
+                        />
+                      )}
                     </Box>
                   </Box>
-                  <Box
-                    sx={{ mt: 2, display: "flex", gap: 1, flexWrap: "wrap" }}
-                  >
-                    {!account.is_connected && (
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        startIcon={<LaunchIcon />}
-                        onClick={() => handleAuthorizeInstagram(account)}
-                      >
-                        Authorize
-                      </Button>
-                    )}
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    height: "100%",
+                    gap: 1,
+                    flexWrap: "wrap",
+                  }}
+                >
+                  <Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(account)}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDelete(account.id!)}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>
+                  {!account.is_connected && (
                     <Button
                       variant="outlined"
                       size="small"
-                      startIcon={<RefreshIcon />}
-                      onClick={() => handleCheckConnection(account)}
-                      disabled={connectionChecking === account.id}
+                      startIcon={<LaunchIcon />}
+                      onClick={() => handleAuthorizeInstagram(account)}
                     >
-                      {connectionChecking === account.id ? (
-                        <CircularProgress size={16} />
-                      ) : (
-                        "Check Status"
-                      )}
+                      احراز هویت اینستاگرام
                     </Button>
-                  </Box>
-                </CardContent>
-              </Card>
+                  )}
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<RefreshIcon />}
+                    onClick={() => handleCheckConnection(account)}
+                    disabled={connectionChecking === account.id}
+                  >
+                    {connectionChecking === account.id ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      "بررسی وضعیت"
+                    )}
+                  </Button>
+                </Box>
+              </Box>
             </Grid>
           ))}
         </Grid>
@@ -309,46 +322,46 @@ export default function InstagramAccounts() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          {editingAccount ? "Edit Instagram Account" : "Add Instagram Account"}
+        <DialogTitle color="textPrimary">
+          {editingAccount ? "ویرایش حساب اینستاگرام" : "افزودن حساب اینستاگرام"}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
             <TextField
               fullWidth
-              label="Username"
+              label="نام کاربری (بدون @)"
               value={formData.username}
               onChange={(e) =>
                 setFormData({ ...formData, username: e.target.value })
               }
               sx={{ mb: 2 }}
-              placeholder="username (without @)"
-              helperText="Enter your Instagram username without the @ symbol"
+              placeholder="نام کاربری (بدون @)"
+              helperText="نام کاربری اینستاگرام خود را وارد کنید (بدون @)"
             />
             <TextField
               fullWidth
-              label="Account Name (Optional)"
+              label="نام حساب (اختیاری)"
               value={formData.account_name}
               onChange={(e) =>
                 setFormData({ ...formData, account_name: e.target.value })
               }
-              placeholder="e.g., Business Instagram"
+              placeholder="مثال: حساب اینستاگرام بیزینس"
             />
             <Alert severity="info" sx={{ mt: 2 }}>
-              After adding the account, you'll need to authorize it with
-              Instagram to enable messaging.
+              پس از افزودن حساب, باید آن را با اینستاگرام احراز هویت کنید
+              Instagram برای فعال سازی پیام رسانی.
             </Alert>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handleCloseDialog}>انصراف</Button>
           <Button onClick={handleSubmit} variant="contained" disabled={loading}>
             {loading ? (
               <CircularProgress size={20} />
             ) : editingAccount ? (
-              "Update"
+              "بروزرسانی"
             ) : (
-              "Add"
+              "افزودن"
             )}
           </Button>
         </DialogActions>

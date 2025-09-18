@@ -57,7 +57,7 @@ const ComplexCard = () => {
     <ParentCard title="Complex Card" codeModel={<ComplexCardCode />}>
       <Grid container spacing={3}>
         {complexCard.map((author, index) => (
-          <Grid item xs={12} sm={4} key={index}>
+          <Grid size={{ xs: 12, sm: 4 }} key={index}>
             <BlankCard className="hoverCard">
               <>
                 <Typography component={Link} href="/">

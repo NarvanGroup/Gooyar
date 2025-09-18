@@ -32,9 +32,7 @@ const Key = () => {
     <Grid container spacing={2}>
       {keys.map((key, i) => (
         <Grid
-          item
-          xs={6}
-          sm={6}
+          size={{ xs: 6, sm: 6 }}
           key={i}
           sx={{
             marginTop: {

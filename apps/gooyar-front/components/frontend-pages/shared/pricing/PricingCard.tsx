@@ -74,7 +74,7 @@ const PricingCard = () => {
     <>
       <Grid container spacing={3}>
         {Licenses.map((license, i) => (
-          <Grid item xs={12} lg={3} sm={6} key={i}>
+          <Grid size={{ xs: 12, lg: 3, sm: 6 }} key={i}>
             <BlankCard>
               <CardContent sx={{ p: "32px" }}>
                 <Box display="flex" alignItems="center" mb={2}>

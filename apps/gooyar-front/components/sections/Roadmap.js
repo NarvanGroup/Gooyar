@@ -89,7 +89,7 @@ export default function Roadmap() {
                         className="roadmap-content wow fadeInRight"
                         data-wow-delay=".2s"
                       >
-                        <h4 className="title">منتظر جادوی گویار باش</h4>
+                        <h4 className="title">منتظر جادوی کانورا باش</h4>
                         <p>
                           از اینجا به بعد، دستیار هوشمندت ۲۴ ساعته، سریع و
                           حرفه‌ای به مشتری‌ها پاسخ می‌ده — با نظارت کامل تو،

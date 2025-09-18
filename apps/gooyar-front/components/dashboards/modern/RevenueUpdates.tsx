@@ -133,7 +133,7 @@ const RevenueUpdates = ({ isLoading }: RevenueupdatestwoCardProps) => {
         >
           <Grid container spacing={3}>
             {/* column */}
-            <Grid item xs={12} sm={8}>
+            <Grid size={{ xs: 12, sm: 8 }}>
               <Box className="rounded-bars">
                 Chart
                 {/* <Chart
@@ -146,7 +146,7 @@ const RevenueUpdates = ({ isLoading }: RevenueupdatestwoCardProps) => {
               </Box>
             </Grid>
             {/* column */}
-            <Grid item xs={12} sm={4}>
+            <Grid size={{ xs: 12, sm: 4 }}>
               <Stack spacing={3} mt={3}>
                 <Stack direction="row" spacing={2} alignItems="center">
                   <Box

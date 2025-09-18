@@ -12,7 +12,7 @@ const Questions = () => {
   return (
     <Box>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} lg={8}>
+        <Grid size={{ xs: 12, lg: 8 }}>
           <Typography variant="h3" textAlign="center" mb={1}>
             Frequently asked questions
           </Typography>

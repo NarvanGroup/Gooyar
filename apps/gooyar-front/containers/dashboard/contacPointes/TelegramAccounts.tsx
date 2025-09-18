@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Button,
   TextField,
@@ -35,6 +33,8 @@ import {
   deleteTelegramAccountService,
   getTelegramQRCodeService,
   checkTelegramConnectionService,
+  sendTelegramCodeService,
+  verifyTelegramCodeService,
 } from "@/api/services/contactPointsServices";
 import { TelegramModel } from "@/api/services/contactPointsServices/models";
 
@@ -42,6 +42,11 @@ interface TelegramFormData {
   phone_number: string;
   username: string;
   account_name: string;
+}
+
+interface VerificationStep {
+  step: "phone" | "verification";
+  phoneNumber?: string;
 }
 
 export default function TelegramAccounts() {
@@ -62,6 +67,12 @@ export default function TelegramAccounts() {
   );
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [verificationStep, setVerificationStep] = useState<VerificationStep>({
+    step: "phone",
+  });
+  const [verificationCode, setVerificationCode] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifyingCode, setVerifyingCode] = useState(false);
 
   const [formData, setFormData] = useState<TelegramFormData>({
     phone_number: "",
@@ -81,7 +92,7 @@ export default function TelegramAccounts() {
         setTelegramAccounts(response.data);
       }
     } catch (error) {
-      setError("Failed to fetch Telegram accounts");
+      setError("بررسی وضعیت اتصال با خطا مواجه شد");
     } finally {
       setLoading(false);
     }
@@ -114,51 +125,111 @@ export default function TelegramAccounts() {
       username: "",
       account_name: "",
     });
+    setVerificationStep({ step: "phone" });
+    setVerificationCode("");
+    setError("");
+    setSuccess("");
   };
 
   const handleSubmit = async () => {
+    if (verificationStep.step === "phone") {
+      await handleSendCode();
+    } else {
+      await handleVerifyCode();
+    }
+  };
+
+  const handleSendCode = async () => {
     if (!formData.phone_number.trim()) {
-      setError("Phone number is required");
+      setError("شماره تلفن اجباری است");
       return;
     }
 
-    setLoading(true);
+    setSendingCode(true);
+    setError("");
+    try {
+      const response = await sendTelegramCodeService(formData.phone_number);
+      if (response?.success) {
+        // Check if user is already authorized
+        if (response?.alreadyAuthorized) {
+          // User is already logged in, save account directly
+          await saveTelegramAccount();
+        } else {
+          // User needs verification, show verification step
+          setVerificationStep({
+            step: "verification",
+            phoneNumber: formData.phone_number,
+          });
+          setSuccess("کد تایید به شماره تلفن شما ارسال شد");
+        }
+      } else {
+        setError(response?.data?.error || "خطا در ارسال کد تایید");
+      }
+    } catch (error) {
+      setError("خطا در ارسال کد تایید");
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  const saveTelegramAccount = async () => {
     try {
       const accountData: TelegramModel = {
         phone_number: formData.phone_number,
         username: formData.username,
         account_name: formData.account_name,
-        is_connected: false,
+        is_connected: true,
       };
 
       if (editingAccount) {
         await updateTelegramAccountService(editingAccount.id!, accountData);
-        setSuccess("Telegram account updated successfully");
+        setSuccess("حساب تلگرام با موفقیت بروزرسانی شد");
       } else {
         await addTelegramAccountService(accountData);
-        setSuccess("Telegram account added successfully");
+        setSuccess("حساب تلگرام با موفقیت افزوده شد");
       }
 
       handleCloseDialog();
       fetchTelegramAccounts();
     } catch (error) {
-      setError("Failed to save Telegram account");
+      setError("خطا در ذخیره حساب تلگرام");
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode.trim()) {
+      setError("کد تایید اجباری است");
+      return;
+    }
+
+    setVerifyingCode(true);
+    setError("");
+    try {
+      const response = await verifyTelegramCodeService(verificationCode);
+      if (response?.data?.success) {
+        // After successful verification, save the account
+        await saveTelegramAccount();
+      } else {
+        setError(response?.data?.error || "کد تایید نامعتبر است");
+      }
+    } catch (error) {
+      setError("خطا در تایید کد");
     } finally {
-      setLoading(false);
+      setVerifyingCode(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this Telegram account?"))
+    if (!confirm("آیا مطمئن هستید که می‌خواهید حساب تلگرام را حذف کنید؟"))
       return;
 
     setLoading(true);
     try {
       await deleteTelegramAccountService(id);
-      setSuccess("Telegram account deleted successfully");
+      setSuccess("حساب تلگرام با موفقیت حذف شد");
       fetchTelegramAccounts();
     } catch (error) {
-      setError("Failed to delete Telegram account");
+      setError("بررسی وضعیت اتصال با خطا مواجه شد");
     } finally {
       setLoading(false);
     }
@@ -173,10 +244,10 @@ export default function TelegramAccounts() {
         setQrCode(response.data.qr_code);
         setOpenQRDialog(true);
       } else {
-        setError("Failed to generate QR code");
+        setError("بررسی وضعیت اتصال با خطا مواجه شد");
       }
     } catch (error) {
-      setError("Failed to get QR code");
+      setError("بررسی وضعیت اتصال با خطا مواجه شد");
     } finally {
       setQrLoading(false);
     }
@@ -187,15 +258,15 @@ export default function TelegramAccounts() {
     try {
       const response = await checkTelegramConnectionService(account.id!);
       if (response?.data?.is_connected) {
-        setSuccess("Telegram account connected successfully");
+        setSuccess("حساب تلگرام با موفقیت اتصال داده شد");
         fetchTelegramAccounts();
       } else {
         setError(
-          "Telegram account not connected. Please scan the QR code again."
+          "حساب تلگرام اتصال ندارد. لطفا QR code را دوباره دریافت کنید."
         );
       }
     } catch (error) {
-      setError("Failed to check connection status");
+      setError("بررسی وضعیت اتصال با خطا مواجه شد");
     } finally {
       setConnectionChecking(null);
     }
@@ -228,13 +299,15 @@ export default function TelegramAccounts() {
           mb: 3,
         }}
       >
-        <Typography variant="h6">Telegram Accounts</Typography>
+        <Typography color="textPrimary" variant="h6">
+          حساب های تلگرام
+        </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => handleOpenDialog()}
         >
-          Add Telegram Account
+          افزودن حساب تلگرام
         </Button>
       </Box>
 
@@ -243,97 +316,114 @@ export default function TelegramAccounts() {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} pb={3}>
           {telegramAccounts.map((account) => (
-            <Grid item xs={12} sm={6} md={4} key={account.id}>
-              <Card>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h6">
-                        {account.account_name ||
-                          account.username ||
-                          account.phone_number}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {account.username && `@${account.username}`}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {account.phone_number}
-                      </Typography>
-                      <Box sx={{ mt: 1 }}>
-                        {account.is_connected ? (
-                          <Chip
-                            icon={<CheckCircleIcon />}
-                            label="Connected"
-                            color="success"
-                            size="small"
-                          />
-                        ) : (
-                          <Chip
-                            icon={<CancelIcon />}
-                            label="Not Connected"
-                            color="error"
-                            size="small"
-                          />
-                        )}
-                      </Box>
-                    </Box>
-                    <Box>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleOpenDialog(account)}
-                        color="primary"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(account.id!)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={account.id}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  border: "1px solid #e0e0e0",
+                  p: 2,
+                  borderRadius: 1,
+                  width: "100%",
+                  minWidth: 300,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h6" color="textPrimary">
+                      {account.account_name ||
+                        account.username ||
+                        account.phone_number}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {account.username && `@${account.username}`}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {account.phone_number}
+                    </Typography>
+                    <Box sx={{ mt: 1 }}>
+                      {account.is_connected ? (
+                        <Chip
+                          icon={<CheckCircleIcon />}
+                          label="متصل"
+                          color="success"
+                          size="small"
+                        />
+                      ) : (
+                        <Chip
+                          icon={<CancelIcon />}
+                          label="متصل نیست"
+                          color="error"
+                          size="small"
+                        />
+                      )}
                     </Box>
                   </Box>
-                  <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
-                    {!account.is_connected && (
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        startIcon={<QrCodeIcon />}
-                        onClick={() => handleGetQRCode(account)}
-                        disabled={qrLoading}
-                      >
-                        {qrLoading ? (
-                          <CircularProgress size={16} />
-                        ) : (
-                          "Get QR Code"
-                        )}
-                      </Button>
-                    )}
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                    height: "100%",
+                  }}
+                >
+                  <Box>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(account)}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDelete(account.id!)}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </Box>{" "}
+                  {!account.is_connected && (
                     <Button
                       variant="outlined"
                       size="small"
-                      startIcon={<RefreshIcon />}
-                      onClick={() => handleCheckConnection(account)}
-                      disabled={connectionChecking === account.id}
+                      startIcon={<QrCodeIcon />}
+                      onClick={() => handleGetQRCode(account)}
+                      disabled={qrLoading}
                     >
-                      {connectionChecking === account.id ? (
+                      {qrLoading ? (
                         <CircularProgress size={16} />
                       ) : (
-                        "Check Status"
+                        "دریافت QR Code"
                       )}
                     </Button>
-                  </Box>
-                </CardContent>
-              </Card>
+                  )}
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    startIcon={<RefreshIcon />}
+                    onClick={() => handleCheckConnection(account)}
+                    disabled={connectionChecking === account.id}
+                  >
+                    {connectionChecking === account.id ? (
+                      <CircularProgress size={16} />
+                    ) : (
+                      "بررسی وضعیت"
+                    )}
+                  </Button>
+                </Box>
+              </Box>
             </Grid>
           ))}
         </Grid>
@@ -346,51 +436,105 @@ export default function TelegramAccounts() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          {editingAccount ? "Edit Telegram Account" : "Add Telegram Account"}
+        <DialogTitle color="textPrimary">
+          {verificationStep.step === "phone"
+            ? editingAccount
+              ? "ویرایش حساب تلگرام"
+              : "افزودن حساب تلگرام"
+            : "تایید شماره تلفن"}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
-            <TextField
-              fullWidth
-              label="Phone Number"
-              value={formData.phone_number}
-              onChange={(e) =>
-                setFormData({ ...formData, phone_number: e.target.value })
-              }
-              sx={{ mb: 2 }}
-              placeholder="+1234567890"
-            />
-            <TextField
-              fullWidth
-              label="Username (Optional)"
-              value={formData.username}
-              onChange={(e) =>
-                setFormData({ ...formData, username: e.target.value })
-              }
-              sx={{ mb: 2 }}
-              placeholder="username (without @)"
-            />
-            <TextField
-              fullWidth
-              label="Account Name (Optional)"
-              value={formData.account_name}
-              onChange={(e) =>
-                setFormData({ ...formData, account_name: e.target.value })
-              }
-              placeholder="e.g., Business Telegram"
-            />
+            {verificationStep.step === "phone" ? (
+              <>
+                <TextField
+                  fullWidth
+                  label="شماره تلفن"
+                  value={formData.phone_number}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone_number: e.target.value })
+                  }
+                  sx={{ mb: 2 }}
+                  placeholder="+1234567890"
+                />
+                <TextField
+                  fullWidth
+                  label="نام کاربری (اختیاری)"
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  sx={{ mb: 2 }}
+                  placeholder="نام کاربری (بدون @)"
+                />
+                <TextField
+                  fullWidth
+                  label="نام حساب (اختیاری)"
+                  value={formData.account_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, account_name: e.target.value })
+                  }
+                  placeholder="مثال: حساب تلگرام بیزینس"
+                />
+              </>
+            ) : (
+              <>
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold", mb: 1 }}
+                  >
+                    نکات امنیتی مهم:
+                  </Typography>
+                  <Typography variant="body2" component="div">
+                    • کد تایید را با هیچکس به اشتراک نگذارید
+                  </Typography>
+                  <Typography variant="body2" component="div">
+                    • اطلاعات شما نزد ما امن است
+                  </Typography>
+                  <Typography variant="body2" component="div">
+                    • بهتر است از حساب بیزینس استفاده کنید نه حساب شخصی
+                  </Typography>
+                </Alert>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 2, color: "text.secondary" }}
+                >
+                  کد تایید به شماره {verificationStep.phoneNumber} ارسال شد
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="کد تایید"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder="کد 5 رقمی دریافتی"
+                  inputProps={{ maxLength: 5 }}
+                />
+              </>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-            {loading ? (
+          <Button onClick={handleCloseDialog}>انصراف</Button>
+          {verificationStep.step === "verification" && (
+            <Button
+              onClick={() => setVerificationStep({ step: "phone" })}
+              disabled={sendingCode || verifyingCode}
+            >
+              بازگشت
+            </Button>
+          )}
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            disabled={sendingCode || verifyingCode}
+          >
+            {sendingCode || verifyingCode ? (
               <CircularProgress size={20} />
-            ) : editingAccount ? (
-              "Update"
+            ) : verificationStep.step === "phone" ? (
+              "ارسال کد تایید"
             ) : (
-              "Add"
+              "تایید کد"
             )}
           </Button>
         </DialogActions>
@@ -403,18 +547,18 @@ export default function TelegramAccounts() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Scan Telegram QR Code</DialogTitle>
+        <DialogTitle>دریافت QR Code تلگرام</DialogTitle>
         <DialogContent>
           <Box sx={{ textAlign: "center", py: 2 }}>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              Scan this QR code with your Telegram mobile app to connect your
-              account
+              دریافت این QR code با اپلیکیشن تلگرام خود برای اتصال حساب
             </Typography>
             {qrCode ? (
               <Paper sx={{ p: 2, display: "inline-block" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`data:image/png;base64,${qrCode}`}
-                  alt="Telegram QR Code"
+                  alt="QR Code تلگرام"
                   style={{ maxWidth: "200px", height: "auto" }}
                 />
               </Paper>
@@ -422,12 +566,12 @@ export default function TelegramAccounts() {
               <CircularProgress />
             )}
             <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
-              After scanning, click "Check Status" to verify the connection
+              پس از دریافت, کلیک کنید "بررسی وضعیت" برای تایید اتصال
             </Typography>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseQRDialog}>Close</Button>
+          <Button onClick={handleCloseQRDialog}>انصراف</Button>
           <Button
             onClick={() =>
               selectedAccount && handleCheckConnection(selectedAccount)
@@ -438,7 +582,7 @@ export default function TelegramAccounts() {
             {connectionChecking === selectedAccount?.id ? (
               <CircularProgress size={20} />
             ) : (
-              "Check Status"
+              "بررسی وضعیت"
             )}
           </Button>
         </DialogActions>

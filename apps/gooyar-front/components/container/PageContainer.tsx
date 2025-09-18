@@ -1,6 +1,6 @@
 type Props = {
   description?: string;
-  children: JSX.Element | JSX.Element[] | any;
+  children: any;
   title?: string;
 };
 

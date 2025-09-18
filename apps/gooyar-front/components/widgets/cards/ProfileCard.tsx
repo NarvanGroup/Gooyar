@@ -66,7 +66,7 @@ const ProfileCard = () => {
     <ParentCard title="Profile Card" codeModel={<ProfileCardCode />}>
       <Grid container spacing={3}>
         {profileCard.map((card, index) => (
-          <Grid item xs={12} sm={4} key={index}>
+          <Grid size={{ xs: 12, sm: 4 }} key={index}>
             <BlankCard>
               <CardContent>
                 <Stack direction={"column"} gap={2} alignItems="center">

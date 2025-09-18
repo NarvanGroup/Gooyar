@@ -83,7 +83,7 @@ const Form = () => {
       >
         <Container maxWidth="lg">
           <Grid container spacing={3} justifyContent="center">
-            <Grid item xs={12} lg={8} alignItems="center">
+            <Grid size={{ xs: 12, lg: 8 }} alignItems="center">
               <Stack spacing={3} alignItems="flex-start">
                 <Stack spacing={1}>
                   <Stack
@@ -153,13 +153,13 @@ const Form = () => {
               </Stack>
               {/* <form>
                 <Grid container spacing={3} justifyContent="center">
-                  <Grid item xs={12} lg={6} alignItems="center">
+                  <Grid size={{ xs: 12, lg: 6 }} alignItems="center">
                     <CustomFormLabel htmlFor="fname" sx={{ mt: 0 }}>
                       First Name *
                     </CustomFormLabel>
                     <CustomTextField id="fname" placeholder="Name" fullWidth />
                   </Grid>
-                  <Grid item xs={12} lg={6} alignItems="center">
+                  <Grid size={{ xs: 12, lg: 6 }} alignItems="center">
                     <CustomFormLabel htmlFor="lname" sx={{ mt: 0 }}>
                       Last Name *
                     </CustomFormLabel>
@@ -169,7 +169,7 @@ const Form = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12} lg={6} alignItems="center">
+                  <Grid size={{ xs: 12, lg: 6 }} alignItems="center">
                     <CustomFormLabel htmlFor="phone" sx={{ mt: 0 }}>
                       Phone Number *
                     </CustomFormLabel>
@@ -179,7 +179,7 @@ const Form = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12} lg={6} alignItems="center">
+                  <Grid size={{ xs: 12, lg: 6 }} alignItems="center">
                     <CustomFormLabel htmlFor="txt-email" sx={{ mt: 0 }}>
                       Email *
                     </CustomFormLabel>
@@ -189,7 +189,7 @@ const Form = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12} alignItems="center">
+                  <Grid size={{ xs: 12 }} alignItems="center">
                     <CustomFormLabel htmlFor="txt-enquire" sx={{ mt: 0 }}>
                       Enquire related to *
                     </CustomFormLabel>
@@ -207,7 +207,7 @@ const Form = () => {
                       ))}
                     </CustomSelect>
                   </Grid>
-                  <Grid item xs={12} alignItems="center">
+                  <Grid size={{ xs: 12 }} alignItems="center">
                     <CustomFormLabel htmlFor="txt-message" sx={{ mt: 0 }}>
                       Message
                     </CustomFormLabel>
@@ -220,7 +220,7 @@ const Form = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12} alignItems="center">
+                  <Grid size={{ xs: 12 }} alignItems="center">
                     <Button variant="contained" size="large">
                       Submit
                     </Button>
@@ -228,7 +228,7 @@ const Form = () => {
                 </Grid>
               </form> */}
             </Grid>
-            <Grid item xs={12} lg={4} alignItems="center">
+            <Grid size={{ xs: 12, lg: 4 }} alignItems="center">
               <Address />
             </Grid>
           </Grid>

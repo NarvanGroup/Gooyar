@@ -74,7 +74,7 @@ const FAQ = () => {
     <Box pt={10} pb={10}>
       <Container maxWidth="lg">
         <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <Typography
               variant="h4"
               textAlign="center"
@@ -108,7 +108,7 @@ const FAQ = () => {
           </Grid>
         </Grid>
         <Grid container spacing={3} justifyContent="center">
-          <Grid item xs={12} lg={5}>
+          <Grid size={{ xs: 12, lg: 5 }}>
             <Box
               mt={5}
               borderRadius="8px"

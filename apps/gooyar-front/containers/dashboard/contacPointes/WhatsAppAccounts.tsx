@@ -3,8 +3,6 @@
 import React, { useState, useEffect } from "react";
 import {
   Box,
-  Card,
-  CardContent,
   Typography,
   Button,
   TextField,
@@ -35,12 +33,19 @@ import {
   deleteWhatsAppAccountService,
   getWhatsAppQRCodeService,
   checkWhatsAppConnectionService,
+  sendWhatsAppCodeService,
+  verifyWhatsAppCodeService,
 } from "@/api/services/contactPointsServices";
 import { WhatsAppModel } from "@/api/services/contactPointsServices/models";
 
 interface WhatsAppFormData {
   phone_number: string;
   account_name: string;
+}
+
+interface VerificationStep {
+  step: "phone" | "verification";
+  phoneNumber?: string;
 }
 
 export default function WhatsAppAccounts() {
@@ -61,6 +66,12 @@ export default function WhatsAppAccounts() {
   );
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [verificationStep, setVerificationStep] = useState<VerificationStep>({
+    step: "phone",
+  });
+  const [verificationCode, setVerificationCode] = useState("");
+  const [sendingCode, setSendingCode] = useState(false);
+  const [verifyingCode, setVerifyingCode] = useState(false);
 
   const [formData, setFormData] = useState<WhatsAppFormData>({
     phone_number: "",
@@ -109,36 +120,99 @@ export default function WhatsAppAccounts() {
       phone_number: "",
       account_name: "",
     });
+    setVerificationStep({ step: "phone" });
+    setVerificationCode("");
+    setError("");
+    setSuccess("");
   };
 
   const handleSubmit = async () => {
+    if (verificationStep.step === "phone") {
+      await handleSendCode();
+    } else {
+      await handleVerifyCode();
+    }
+  };
+
+  const handleSendCode = async () => {
     if (!formData.phone_number.trim()) {
-      setError("Phone number is required");
+      setError("شماره تلفن اجباری است");
       return;
     }
 
-    setLoading(true);
+    setSendingCode(true);
+    setError("");
+    try {
+      const response = await sendWhatsAppCodeService(formData.phone_number);
+      if (response?.success) {
+        // Check if user is already authorized
+        if (response?.alreadyAuthorized) {
+          // User is already logged in, save account directly
+          await saveWhatsAppAccount();
+        } else {
+          // User needs verification, show verification step
+          setVerificationStep({
+            step: "verification",
+            phoneNumber: formData.phone_number,
+          });
+          setSuccess("کد تایید به شماره تلفن شما ارسال شد");
+        }
+      } else {
+        setError(response?.error || "خطا در ارسال کد تایید");
+      }
+    } catch (error) {
+      setError("خطا در ارسال کد تایید");
+    } finally {
+      setSendingCode(false);
+    }
+  };
+
+  const saveWhatsAppAccount = async () => {
     try {
       const accountData: WhatsAppModel = {
         phone_number: formData.phone_number,
         account_name: formData.account_name,
-        is_connected: false,
+        is_connected: true,
       };
 
       if (editingAccount) {
         await updateWhatsAppAccountService(editingAccount.id!, accountData);
-        setSuccess("WhatsApp account updated successfully");
+        setSuccess("حساب واتساپ با موفقیت بروزرسانی شد");
       } else {
         await addWhatsAppAccountService(accountData);
-        setSuccess("WhatsApp account added successfully");
+        setSuccess("حساب واتساپ با موفقیت افزوده شد");
       }
 
       handleCloseDialog();
       fetchWhatsAppAccounts();
     } catch (error) {
-      setError("Failed to save WhatsApp account");
+      setError("خطا در ذخیره حساب واتساپ");
+    }
+  };
+
+  const handleVerifyCode = async () => {
+    if (!verificationCode.trim()) {
+      setError("کد تایید اجباری است");
+      return;
+    }
+
+    setVerifyingCode(true);
+    setError("");
+    try {
+      const response = await verifyWhatsAppCodeService(
+        formData.phone_number,
+        verificationCode
+      );
+      if (response?.success) {
+        // After successful verification, save the account
+        await saveWhatsAppAccount();
+      } else {
+        setError(response?.error || "کد تایید نامعتبر است");
+      }
+    } catch (error) {
+      setError("خطا در تایید کد");
     } finally {
-      setLoading(false);
+      setVerifyingCode(false);
     }
   };
 
@@ -181,15 +255,15 @@ export default function WhatsAppAccounts() {
     try {
       const response = await checkWhatsAppConnectionService(account.id!);
       if (response?.data?.is_connected) {
-        setSuccess("WhatsApp account connected successfully");
+        setSuccess("حساب واتساپ با موفقیت اتصال داده شد");
         fetchWhatsAppAccounts();
       } else {
         setError(
-          "WhatsApp account not connected. Please scan the QR code again."
+          "حساب واتساپ اتصال ندارد. لطفا QR code را دوباره دریافت کنید."
         );
       }
     } catch (error) {
-      setError("Failed to check connection status");
+      setError("بررسی وضعیت اتصال با خطا مواجه شد");
     } finally {
       setConnectionChecking(null);
     }
@@ -222,13 +296,15 @@ export default function WhatsAppAccounts() {
           mb: 3,
         }}
       >
-        <Typography variant="h6">WhatsApp Accounts</Typography>
+        <Typography color="textPrimary" variant="h6">
+          حساب های واتساپ
+        </Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => handleOpenDialog()}
         >
-          Add WhatsApp Account
+          افزودن حساب واتساپ
         </Button>
       </Box>
 
@@ -237,59 +313,77 @@ export default function WhatsAppAccounts() {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} pb={3}>
           {whatsAppAccounts.map((account) => (
-            <Grid item xs={12} sm={6} md={4} key={account.id}>
-              <Card>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h6">
-                        {account.account_name || account.phone_number}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {account.phone_number}
-                      </Typography>
-                      <Box sx={{ mt: 1 }}>
-                        {account.is_connected ? (
-                          <Chip
-                            icon={<CheckCircleIcon />}
-                            label="Connected"
-                            color="success"
-                            size="small"
-                          />
-                        ) : (
-                          <Chip
-                            icon={<CancelIcon />}
-                            label="Not Connected"
-                            color="error"
-                            size="small"
-                          />
-                        )}
-                      </Box>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={account.id}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  border: "1px solid #e0e0e0",
+                  p: 2,
+                  borderRadius: 1,
+                  width: "100%",
+                  minWidth: 300,
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "flex-start",
+                  }}
+                >
+                  <Box>
+                    <Typography variant="h6" color="textPrimary">
+                      {account.account_name || account.phone_number}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {account.phone_number}
+                    </Typography>
+                    <Box sx={{ mt: 1 }}>
+                      {account.is_connected ? (
+                        <Chip
+                          icon={<CheckCircleIcon />}
+                          label="متصل"
+                          color="success"
+                          size="small"
+                        />
+                      ) : (
+                        <Chip
+                          icon={<CancelIcon />}
+                          label="متصل نیست"
+                          color="error"
+                          size="small"
+                        />
+                      )}
                     </Box>
-                    <Box>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleOpenDialog(account)}
-                        color="primary"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(account.id!)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
+                  </Box>
+                </Box>
+                <Box
+                  sx={{
+                    display: "flex",
+                    gap: 1,
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <Box sx={{ display: "flex", gap: 1 }}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleOpenDialog(account)}
+                      color="primary"
+                    >
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleDelete(account.id!)}
+                      color="error"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
                   </Box>
                   <Box sx={{ mt: 2, display: "flex", gap: 1 }}>
                     {!account.is_connected && (
@@ -303,7 +397,7 @@ export default function WhatsAppAccounts() {
                         {qrLoading ? (
                           <CircularProgress size={16} />
                         ) : (
-                          "Get QR Code"
+                          "دریافت QR Code"
                         )}
                       </Button>
                     )}
@@ -317,12 +411,12 @@ export default function WhatsAppAccounts() {
                       {connectionChecking === account.id ? (
                         <CircularProgress size={16} />
                       ) : (
-                        "Check Status"
+                        "بررسی وضعیت"
                       )}
                     </Button>
                   </Box>
-                </CardContent>
-              </Card>
+                </Box>
+              </Box>
             </Grid>
           ))}
         </Grid>
@@ -335,41 +429,95 @@ export default function WhatsAppAccounts() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>
-          {editingAccount ? "Edit WhatsApp Account" : "Add WhatsApp Account"}
+        <DialogTitle color="textPrimary">
+          {verificationStep.step === "phone"
+            ? editingAccount
+              ? "ویرایش حساب واتساپ"
+              : "افزودن حساب واتساپ"
+            : "تایید شماره تلفن"}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ pt: 1 }}>
-            <TextField
-              fullWidth
-              label="Phone Number"
-              value={formData.phone_number}
-              onChange={(e) =>
-                setFormData({ ...formData, phone_number: e.target.value })
-              }
-              sx={{ mb: 2 }}
-              placeholder="+1234567890"
-            />
-            <TextField
-              fullWidth
-              label="Account Name (Optional)"
-              value={formData.account_name}
-              onChange={(e) =>
-                setFormData({ ...formData, account_name: e.target.value })
-              }
-              placeholder="e.g., Business WhatsApp"
-            />
+            {verificationStep.step === "phone" ? (
+              <>
+                <TextField
+                  fullWidth
+                  label="شماره تلفن"
+                  value={formData.phone_number}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone_number: e.target.value })
+                  }
+                  sx={{ mb: 2 }}
+                  placeholder="+1234567890"
+                />
+                <TextField
+                  fullWidth
+                  label="نام حساب (اختیاری)"
+                  value={formData.account_name}
+                  onChange={(e) =>
+                    setFormData({ ...formData, account_name: e.target.value })
+                  }
+                  placeholder="مثال: حساب واتساپ بیزینس"
+                />
+              </>
+            ) : (
+              <>
+                <Alert severity="info" sx={{ mb: 2 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ fontWeight: "bold", mb: 1 }}
+                  >
+                    نکات امنیتی مهم:
+                  </Typography>
+                  <Typography variant="body2" component="div">
+                    • کد تایید را با هیچکس به اشتراک نگذارید
+                  </Typography>
+                  <Typography variant="body2" component="div">
+                    • اطلاعات شما نزد ما امن است
+                  </Typography>
+                  <Typography variant="body2" component="div">
+                    • بهتر است از حساب بیزینس استفاده کنید نه حساب شخصی
+                  </Typography>
+                </Alert>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 2, color: "text.secondary" }}
+                >
+                  کد تایید به شماره {verificationStep.phoneNumber} ارسال شد
+                </Typography>
+                <TextField
+                  fullWidth
+                  label="کد تایید"
+                  value={verificationCode}
+                  onChange={(e) => setVerificationCode(e.target.value)}
+                  placeholder="کد 6 رقمی دریافتی"
+                  inputProps={{ maxLength: 6 }}
+                />
+              </>
+            )}
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button onClick={handleSubmit} variant="contained" disabled={loading}>
-            {loading ? (
+          <Button onClick={handleCloseDialog}>انصراف</Button>
+          {verificationStep.step === "verification" && (
+            <Button
+              onClick={() => setVerificationStep({ step: "phone" })}
+              disabled={sendingCode || verifyingCode}
+            >
+              بازگشت
+            </Button>
+          )}
+          <Button
+            onClick={handleSubmit}
+            variant="contained"
+            disabled={sendingCode || verifyingCode}
+          >
+            {sendingCode || verifyingCode ? (
               <CircularProgress size={20} />
-            ) : editingAccount ? (
-              "Update"
+            ) : verificationStep.step === "phone" ? (
+              "ارسال کد تایید"
             ) : (
-              "Add"
+              "تایید کد"
             )}
           </Button>
         </DialogActions>
@@ -382,18 +530,18 @@ export default function WhatsAppAccounts() {
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>Scan WhatsApp QR Code</DialogTitle>
+        <DialogTitle>دریافت QR Code واتساپ</DialogTitle>
         <DialogContent>
           <Box sx={{ textAlign: "center", py: 2 }}>
             <Typography variant="body2" sx={{ mb: 2 }}>
-              Scan this QR code with your WhatsApp mobile app to connect your
-              account
+              دریافت این QR code با اپلیکیشن واتساپ خود برای اتصال حساب
             </Typography>
             {qrCode ? (
               <Paper sx={{ p: 2, display: "inline-block" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={`data:image/png;base64,${qrCode}`}
-                  alt="WhatsApp QR Code"
+                  alt="QR Code واتساپ"
                   style={{ maxWidth: "200px", height: "auto" }}
                 />
               </Paper>
@@ -401,12 +549,12 @@ export default function WhatsAppAccounts() {
               <CircularProgress />
             )}
             <Typography variant="body2" sx={{ mt: 2, color: "text.secondary" }}>
-              After scanning, click "Check Status" to verify the connection
+              پس از دریافت, کلیک کنید "بررسی وضعیت" برای تایید اتصال
             </Typography>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseQRDialog}>Close</Button>
+          <Button onClick={handleCloseQRDialog}>انصراف</Button>
           <Button
             onClick={() =>
               selectedAccount && handleCheckConnection(selectedAccount)
@@ -417,7 +565,7 @@ export default function WhatsAppAccounts() {
             {connectionChecking === selectedAccount?.id ? (
               <CircularProgress size={20} />
             ) : (
-              "Check Status"
+              "بررسی وضعیت"
             )}
           </Button>
         </DialogActions>

@@ -7,7 +7,7 @@ const FrameworksTitle = () => {
 
     return (
         <Grid container spacing={3} justifyContent="center">
-            <Grid item xs={12} sm={10} lg={8}>
+            <Grid size={{ xs: 12, sm: 10, lg: 8 }}>
                 <Typography variant='h2' fontWeight={700} textAlign="center" sx={{
                     fontSize: {
                         lg: '36px',

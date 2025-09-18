@@ -40,7 +40,7 @@ const C2a2 = () => {
       >
         <Container maxWidth="lg">
           <Grid container justifyContent="space-between" spacing={3}>
-            <Grid item xs={12} sm={12} lg={5}>
+            <Grid size={{ xs: 12, sm: 12, lg: 5 }}>
               <Typography
                 variant="h2"
                 color="background.paper"
@@ -68,7 +68,7 @@ const C2a2 = () => {
                 </StyledButton2>
               </Stack>
             </Grid>
-            <Grid item xs={12} lg={5}>
+            <Grid size={{ xs: 12, lg: 5 }}>
               <Box
                 sx={{
                   textAlign: {

@@ -51,7 +51,7 @@ export default function Banner2() {
                   ساده‌تر از همیشه
                 </h2>
                 <p className="wow fadeInUp" data-wow-delay=".4s">
-                  با گویار، در شبکه‌های اجتماعی پاسخ‌گوی مشتریان باشید؛ سریع،
+                  با کانورا، در شبکه‌های اجتماعی پاسخ‌گوی مشتریان باشید؛ سریع،
                   دقیق، ۲۴/۷ و با قابلیت صدا یا متن.
                 </p>
                 <div className="banner-btn-two">

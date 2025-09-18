@@ -25,7 +25,7 @@ const Banner = () => {
     >
       <Container maxWidth="lg">
         <Grid container spacing={3} justifyContent="space-between">
-          <Grid item xs={12} lg={6} alignItems="center">
+          <Grid size={{ xs: 12, lg: 6 }} alignItems="center">
             <Typography
               variant="h1"
               mb={3}
@@ -66,7 +66,7 @@ const Banner = () => {
               </Button> */}
             </Stack>
           </Grid>
-          <Grid item xs={12} lg={5} display="flex" alignItems="center">
+          <Grid size={{ xs: 12, lg: 5 }} display="flex" alignItems="center">
             <Typography lineHeight={1.9}>
               شناس‌بان به‌عنوان یک پیشگام در ارائه خدمات احراز هویت آنلاین، با
               هدف ایجاد اعتماد و اطمینان در معاملات، به وجود آمده است. ما با

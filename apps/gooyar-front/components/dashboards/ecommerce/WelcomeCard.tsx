@@ -31,7 +31,7 @@ const WelcomeCard = () => {
     >
       <CardContent sx={{ py: 4, px: 2 }}>
         <Grid container justifyContent="space-between">
-          <Grid item sm={6} display="flex" alignItems="center">
+          <Grid size={{ sm: 6 }} display="flex" alignItems="center">
             <Box>
               <Box
                 gap="16px"
@@ -141,7 +141,7 @@ const WelcomeCard = () => {
             </Box>
           </Grid>
           {isMdUp && (
-            <Grid item sm={6}>
+            <Grid size={{ sm: 6 }}>
               <Box
                 sx={{
                   width: "340px",

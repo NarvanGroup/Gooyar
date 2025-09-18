@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -20,6 +20,7 @@ import {
   Stack,
   Divider,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -27,148 +28,108 @@ import {
   Delete as DeleteIcon,
   ContentCopy as CopyIcon,
 } from "@mui/icons-material";
-
-interface Variable {
-  id: string;
-  name: string;
-  value: string;
-  type: string;
-  description: string;
-  isRequired: boolean;
-  isSecret: boolean;
-}
+import {
+  AgentModel,
+  AgentVariable,
+} from "@/api/services/agentsServices/models";
 
 interface VariablesTabProps {
-  agentId: string;
+  agent: AgentModel;
+  onSave: (data: Partial<AgentModel>) => Promise<void>;
+  saving: boolean;
 }
 
-const VariablesTab: React.FC<VariablesTabProps> = ({ agentId }) => {
-  const [variables, setVariables] = useState<Variable[]>([
-    {
-      id: "1",
-      name: "API_KEY",
-      value: "sk-1234567890abcdef",
-      type: "string",
-      description: "OpenAI API key for the agent",
-      isRequired: true,
-      isSecret: true,
-    },
-    {
-      id: "2",
-      name: "COMPANY_NAME",
-      value: "Gooyar Inc.",
-      type: "string",
-      description: "Company name for responses",
-      isRequired: false,
-      isSecret: false,
-    },
-    {
-      id: "3",
-      name: "MAX_TOKENS",
-      value: "1000",
-      type: "number",
-      description: "Maximum tokens for responses",
-      isRequired: false,
-      isSecret: false,
-    },
-    {
-      id: "4",
-      name: "TEMPERATURE",
-      value: "0.7",
-      type: "number",
-      description: "AI response temperature",
-      isRequired: false,
-      isSecret: false,
-    },
-  ]);
-
+const VariablesTab: React.FC<VariablesTabProps> = ({
+  agent,
+  onSave,
+  saving,
+}) => {
+  const [variables, setVariables] = useState<AgentVariable[]>(
+    agent.variables || []
+  );
   const [openDialog, setOpenDialog] = useState(false);
-  const [editingVariable, setEditingVariable] = useState<Variable | null>(null);
-  const [newVariable, setNewVariable] = useState({
-    name: "",
+  const [editingVariable, setEditingVariable] = useState<AgentVariable | null>(
+    null
+  );
+  const [newVariable, setNewVariable] = useState<AgentVariable>({
+    title: "",
     value: "",
-    type: "string",
-    description: "",
-    isRequired: false,
-    isSecret: false,
+    id: "",
   });
 
-  const variableTypes = [
-    { value: "string", label: "String" },
-    { value: "number", label: "Number" },
-    { value: "boolean", label: "Boolean" },
-    { value: "array", label: "Array" },
-    { value: "object", label: "Object" },
-  ];
+  // Update variables when agent changes
+  useEffect(() => {
+    setVariables(agent.variables || []);
+  }, [agent]);
 
   const handleAddVariable = () => {
     setEditingVariable(null);
     setNewVariable({
-      name: "",
+      title: "",
       value: "",
-      type: "string",
-      description: "",
-      isRequired: false,
-      isSecret: false,
+      id: "",
     });
     setOpenDialog(true);
   };
 
-  const handleEditVariable = (variable: Variable) => {
+  const handleEditVariable = (variable: AgentVariable, index: number) => {
     setEditingVariable(variable);
-    setNewVariable({
-      name: variable.name,
-      value: variable.value,
-      type: variable.type,
-      description: variable.description,
-      isRequired: variable.isRequired,
-      isSecret: variable.isSecret,
-    });
+    setNewVariable({ ...variable });
     setOpenDialog(true);
   };
 
-  const handleDeleteVariable = (variableId: string) => {
-    setVariables(variables.filter((variable) => variable.id !== variableId));
+  const handleDeleteVariable = (index: number) => {
+    const newVariables = variables.filter((_, i) => i !== index);
+    setVariables(newVariables);
+    handleSaveVariables(newVariables);
   };
 
-  const handleCopyVariable = (variable: Variable) => {
-    navigator.clipboard.writeText(`${variable.name}=${variable.value}`);
+  const handleCopyVariable = (variable: AgentVariable) => {
+    navigator.clipboard.writeText(`${variable.title}=${variable.value}`);
   };
 
   const handleSaveVariable = () => {
+    let newVariables: AgentVariable[];
+
     if (editingVariable) {
       // Update existing variable
-      setVariables(
-        variables.map((variable) =>
-          variable.id === editingVariable.id
-            ? { ...variable, ...newVariable }
-            : variable
-        )
+      const index = variables.findIndex(
+        (variable) => variable === editingVariable
       );
+      newVariables = [...variables];
+      newVariables[index] = {
+        ...newVariable,
+        id: newVariable.id || Date.now().toString(),
+      };
     } else {
       // Add new variable
       const newVariableWithId = {
         ...newVariable,
-        id: Date.now().toString(),
+        id: newVariable.id || Date.now().toString(),
       };
-      setVariables([...variables, newVariableWithId]);
+      newVariables = [...variables, newVariableWithId];
     }
+
+    setVariables(newVariables);
     setOpenDialog(false);
+    handleSaveVariables(newVariables);
   };
 
-  const getVariableTypeColor = (type: string) => {
-    const colors: Record<string, string> = {
-      string: "primary",
-      number: "secondary",
-      boolean: "info",
-      array: "warning",
-      object: "success",
-    };
-    return colors[type] || "default";
+  const handleSaveVariables = async (variablesToSave: AgentVariable[]) => {
+    try {
+      await onSave({ variables: variablesToSave });
+    } catch (error) {
+      console.error("Error saving variables:", error);
+    }
   };
 
-  const getMaskedValue = (value: string, isSecret: boolean) => {
-    if (isSecret) {
+  const getMaskedValue = (value: string) => {
+    // Simple masking for sensitive values
+    if (
+      value.toLowerCase().includes("key") ||
+      value.toLowerCase().includes("secret") ||
+      value.toLowerCase().includes("password")
+    ) {
       return "*".repeat(Math.min(value.length, 8));
     }
     return value;
@@ -193,8 +154,11 @@ const VariablesTab: React.FC<VariablesTabProps> = ({ agentId }) => {
       </Alert>
 
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3 }}>
-        {variables.map((variable) => (
-          <Box key={variable.id} sx={{ flex: "1 1 300px", minWidth: 0 }}>
+        {variables.map((variable, index) => (
+          <Box
+            key={variable.id || index}
+            sx={{ flex: "1 1 300px", minWidth: 0 }}
+          >
             <Card>
               <CardContent>
                 <Box
@@ -206,33 +170,20 @@ const VariablesTab: React.FC<VariablesTabProps> = ({ agentId }) => {
                 >
                   <Box sx={{ flex: 1 }}>
                     <Typography variant="h6" gutterBottom>
-                      {variable.name}
+                      {variable.title}
                     </Typography>
-                    <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-                      <Chip
-                        label={variable.type}
-                        color={getVariableTypeColor(variable.type) as any}
-                        size="small"
-                      />
-                      {variable.isRequired && (
-                        <Chip label="ضروری" color="error" size="small" />
-                      )}
-                      {variable.isSecret && (
-                        <Chip label="محرمانه" color="warning" size="small" />
-                      )}
-                    </Stack>
                     <Typography
                       variant="body2"
                       color="textSecondary"
                       gutterBottom
                     >
-                      {variable.description}
+                      ID: {variable.id}
                     </Typography>
                     <Typography
                       variant="body2"
                       sx={{ fontFamily: "monospace" }}
                     >
-                      {getMaskedValue(variable.value, variable.isSecret)}
+                      {getMaskedValue(variable.value)}
                     </Typography>
                   </Box>
                   <Box>
@@ -245,14 +196,14 @@ const VariablesTab: React.FC<VariablesTabProps> = ({ agentId }) => {
                     </IconButton>
                     <IconButton
                       size="small"
-                      onClick={() => handleEditVariable(variable)}
+                      onClick={() => handleEditVariable(variable, index)}
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
                       size="small"
                       color="error"
-                      onClick={() => handleDeleteVariable(variable.id)}
+                      onClick={() => handleDeleteVariable(index)}
                     >
                       <DeleteIcon />
                     </IconButton>
@@ -279,12 +230,12 @@ const VariablesTab: React.FC<VariablesTabProps> = ({ agentId }) => {
             <Box>
               <TextField
                 fullWidth
-                label="نام متغیر"
-                value={newVariable.name}
+                label="عنوان متغیر"
+                value={newVariable.title}
                 onChange={(e) =>
-                  setNewVariable({ ...newVariable, name: e.target.value })
+                  setNewVariable({ ...newVariable, title: e.target.value })
                 }
-                helperText="از نام‌گذاری UPPER_CASE استفاده کنید"
+                helperText="نام متغیر را وارد کنید"
                 required
               />
             </Box>
@@ -300,82 +251,28 @@ const VariablesTab: React.FC<VariablesTabProps> = ({ agentId }) => {
               />
             </Box>
             <Box>
-              <FormControl fullWidth>
-                <InputLabel>نوع متغیر</InputLabel>
-                <Select
-                  value={newVariable.type}
-                  label="نوع متغیر"
-                  onChange={(e) =>
-                    setNewVariable({ ...newVariable, type: e.target.value })
-                  }
-                >
-                  {variableTypes.map((type) => (
-                    <MenuItem key={type.value} value={type.value}>
-                      {type.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
-            <Box>
               <TextField
                 fullWidth
-                label="توضیحات"
-                multiline
-                rows={2}
-                value={newVariable.description}
+                label="شناسه متغیر"
+                value={newVariable.id}
                 onChange={(e) =>
-                  setNewVariable({
-                    ...newVariable,
-                    description: e.target.value,
-                  })
+                  setNewVariable({ ...newVariable, id: e.target.value })
                 }
-                helperText="توضیح مختصری از اینکه این متغیر برای چه استفاده می‌شود"
+                helperText="شناسه یکتا برای متغیر (اختیاری)"
               />
-            </Box>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Box sx={{ flex: 1 }}>
-                <FormControl fullWidth>
-                  <InputLabel>ضروری</InputLabel>
-                  <Select
-                    value={newVariable.isRequired ? "true" : "false"}
-                    label="ضروری"
-                    onChange={(e) =>
-                      setNewVariable({
-                        ...newVariable,
-                        isRequired: e.target.value === "true",
-                      })
-                    }
-                  >
-                    <MenuItem value="true">بله</MenuItem>
-                    <MenuItem value="false">خیر</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box sx={{ flex: 1 }}>
-                <FormControl fullWidth>
-                  <InputLabel>محرمانه</InputLabel>
-                  <Select
-                    value={newVariable.isSecret ? "true" : "false"}
-                    label="محرمانه"
-                    onChange={(e) =>
-                      setNewVariable({
-                        ...newVariable,
-                        isSecret: e.target.value === "true",
-                      })
-                    }
-                  >
-                    <MenuItem value="true">بله</MenuItem>
-                    <MenuItem value="false">خیر</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
             </Box>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>انصراف</Button>
-          <Button onClick={handleSaveVariable} variant="contained">
+          <Button onClick={() => setOpenDialog(false)} disabled={saving}>
+            انصراف
+          </Button>
+          <Button
+            onClick={handleSaveVariable}
+            variant="contained"
+            disabled={saving}
+            startIcon={saving ? <CircularProgress size={20} /> : null}
+          >
             {editingVariable ? "بروزرسانی" : "افزودن"}
           </Button>
         </DialogActions>

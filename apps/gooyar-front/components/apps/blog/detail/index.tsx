@@ -103,7 +103,8 @@ const BlogDetail = () => {
                     width="100%"
                     height={440}
                     sx={{
-                      borderRadius: (theme) => theme.shape.borderRadius / 5,
+                      borderRadius: (theme: any) =>
+                        theme.shape.borderRadius / 5,
                     }}
                   ></Skeleton>
                 </>

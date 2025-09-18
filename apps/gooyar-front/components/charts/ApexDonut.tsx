@@ -81,7 +81,7 @@ const ApexDonut = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item lg={6} md={12} xs={12}>
+      <Grid size={{ lg: 6, md: 12, xs: 12 }}>
         <ParentCard title="Doughnut Charts" codeModel={<DoughtnutChartCode />}>
           <Chart
             options={optionsdoughnutchart}
@@ -92,7 +92,7 @@ const ApexDonut = () => {
           />
         </ParentCard>
       </Grid>
-      <Grid item lg={6} md={12} xs={12}>
+      <Grid size={{ lg: 6, md: 12, xs: 12 }}>
         <ParentCard title="Pie Charts" codeModel={<PieChartsCode />}>
           <Chart
             options={optionspiechart}

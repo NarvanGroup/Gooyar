@@ -9,7 +9,7 @@ import AnimationFadeIn from '../animation/Animation';
 const DemoTitle = () => {
   return (
     <Grid container spacing={3} justifyContent="center">
-      <Grid item xs={12} sm={10} lg={8}>
+      <Grid size={{ xs: 12, sm: 10, lg: 8 }}>
         <AnimationFadeIn>
           <>
             <Stack

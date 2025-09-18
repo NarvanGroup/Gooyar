@@ -365,7 +365,7 @@ const ProcessBuilderWizard: React.FC<ProcessBuilderWizardProps> = ({
 
               <Grid container spacing={2}>
                 {contactPoints.map((cp) => (
-                  <Grid item xs={12} sm={6} key={cp.id}>
+                  <Grid size={{ xs: 12, sm: 6 }} key={cp.id}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -443,7 +443,7 @@ const ProcessBuilderWizard: React.FC<ProcessBuilderWizardProps> = ({
 
               <Grid container spacing={2}>
                 {knowledgeBases.map((kb) => (
-                  <Grid item xs={12} sm={6} key={kb.id}>
+                  <Grid size={{ xs: 12, sm: 6 }} key={kb.id}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -589,7 +589,6 @@ const ProcessBuilderWizard: React.FC<ProcessBuilderWizardProps> = ({
 
               {/* Summary Card */}
               <Box
-                variant="outlined"
                 sx={{ mt: 3, display: "flex", flexDirection: "column", gap: 2 }}
               >
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

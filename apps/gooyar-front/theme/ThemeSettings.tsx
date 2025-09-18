@@ -37,7 +37,7 @@ export const BuildTheme = (config: any = {}) => {
     shadows: defaultShadow,
     typography: typography,
   };
-  const theme = createTheme(
+  const theme: any = createTheme(
     _.merge({}, baseMode, defaultTheme, locales, themeSelect, {
       direction: config.direction,
     })

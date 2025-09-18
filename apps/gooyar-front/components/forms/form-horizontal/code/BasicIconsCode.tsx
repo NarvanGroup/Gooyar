@@ -45,12 +45,12 @@ const CustomOutlinedInput = styled((props: any) => <OutlinedInput {...props} />)
 
 <div>
     <Grid container spacing={3}>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="bi-name" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Name
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             startAdornment={
               <InputAdornment position="start">
@@ -62,12 +62,12 @@ const CustomOutlinedInput = styled((props: any) => <OutlinedInput {...props} />)
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="bi-company" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Company
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             startAdornment={
               <InputAdornment position="start">
@@ -79,12 +79,12 @@ const CustomOutlinedInput = styled((props: any) => <OutlinedInput {...props} />)
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="bi-email" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Email
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             startAdornment={
               <InputAdornment position="start">
@@ -96,12 +96,12 @@ const CustomOutlinedInput = styled((props: any) => <OutlinedInput {...props} />)
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="bi-phone" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Phone No
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             startAdornment={
               <InputAdornment position="start">
@@ -113,12 +113,12 @@ const CustomOutlinedInput = styled((props: any) => <OutlinedInput {...props} />)
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="bi-message" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Message
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             id="bi-message"
             startAdornment={
@@ -131,8 +131,8 @@ const CustomOutlinedInput = styled((props: any) => <OutlinedInput {...props} />)
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3}></Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 3 }}></Grid>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <Button variant="contained" color="primary">
             Send
           </Button>

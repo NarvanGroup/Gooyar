@@ -31,7 +31,7 @@ const GiftCard = () => {
     <ParentCard title="Gift Card" codeModel={<GiftCardCode />}>
       <Grid container spacing={3}>
         {giftCard.map((card, index) => (
-          <Grid item xs={12} sm={6} key={index}>
+          <Grid size={{ xs: 12, sm: 6 }} key={index}>
             <BlankCard>
               <CardContent>
                 <Stack

@@ -16,7 +16,7 @@ export default function CreateProcessDialog({
 }: {
   open: boolean;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: any;
 }) {
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>

@@ -1,6 +1,6 @@
 import { Calendar } from "./types";
 
-export const sampleCalendars: Calendar[] = [
+export const sampleCalendars: any[] = [
   {
     id: "1",
     title: "برنامه کاری",

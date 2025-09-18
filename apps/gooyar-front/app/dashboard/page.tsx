@@ -28,52 +28,52 @@ export default function Dashboard() {
       <Box mt={3}>
         <Grid container spacing={3}>
           {/* column */}
-          <Grid item xs={12} lg={12}>
+          <Grid size={{ xs: 12, lg: 12 }}>
             <TopCards />
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <RevenueUpdates isLoading={isLoading} />
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6} lg={12}>
+              <Grid size={{ xs: 12, sm: 6, lg: 12 }}>
                 <YearlyBreakup isLoading={isLoading} />
               </Grid>
-              <Grid item xs={12} sm={6} lg={12}>
+              <Grid size={{ xs: 12, sm: 6, lg: 12 }}>
                 <MonthlyEarnings isLoading={isLoading} />
               </Grid>
             </Grid>
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <EmployeeSalary isLoading={isLoading} />
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Customers isLoading={isLoading} />
               </Grid>
-              <Grid item xs={12} sm={6}>
+              <Grid size={{ xs: 12, sm: 6 }}>
                 <Projects isLoading={isLoading} />
               </Grid>
-              <Grid item xs={12}>
+              <Grid size={{ xs: 12 }}>
                 <Social />
               </Grid>
             </Grid>
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <SellingProducts />
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={4}>
+          <Grid size={{ xs: 12, lg: 4 }}>
             <WeeklyStats isLoading={isLoading} />
           </Grid>
           {/* column */}
-          <Grid item xs={12} lg={8}>
+          <Grid size={{ xs: 12, lg: 8 }}>
             <TopPerformers />
           </Grid>
         </Grid>

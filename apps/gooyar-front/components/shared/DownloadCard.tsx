@@ -1,6 +1,5 @@
 "use client";
 import React from "react";
-import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 import { Card, CardHeader, Tooltip, Divider, IconButton } from "@mui/material";
 import { IconDownload } from "@tabler/icons-react";
@@ -37,9 +36,5 @@ const DownloadCard = ({ title, children, onDownload }: any) => {
     </Card>
   );
 };
-DownloadCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  children: PropTypes.any,
-  onDownload: PropTypes.func,
-};
+
 export default DownloadCard;

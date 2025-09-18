@@ -94,11 +94,7 @@ export default function Auth() {
           sx={{ height: "100vh" }}
         >
           <Grid
-            item
-            xs={12}
-            sm={12}
-            lg={5}
-            xl={4}
+            size={{ xs: 12, sm: 12, lg: 5, xl: 4 }}
             display="flex"
             justifyContent="center"
             alignItems="center"
@@ -129,8 +125,8 @@ export default function Auth() {
                         variant="caption"
                         fontWeight="400"
                       >
-                        با ورود و یا ثبت نام در گویار شما شرایط وقوانین استفاده
-                        از سایت گویار وقوانین حریم خصوصی آن را می‌پذیرید.{" "}
+                        با ورود و یا ثبت نام در کانورا شما شرایط وقوانین استفاده
+                        از سایت کانورا وقوانین حریم خصوصی آن را می‌پذیرید.{" "}
                       </Typography>
                     </Stack>
                   }

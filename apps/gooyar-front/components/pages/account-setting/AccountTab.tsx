@@ -124,7 +124,7 @@ const AccountTab = () => {
   return (
     <Grid container spacing={3}>
       {/* Edit Details */}
-      <Grid item xs={12}>
+      <Grid size={{ xs: 12 }}>
         <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
           <BlankCard>
             <CardContent>
@@ -135,7 +135,7 @@ const AccountTab = () => {
               To change your personal detail , edit and save from here
             </Typography> */}
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel
                     sx={{
                       mt: 0,
@@ -150,7 +150,7 @@ const AccountTab = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 2 */}
                   <CustomFormLabel
                     sx={{
@@ -162,7 +162,7 @@ const AccountTab = () => {
                   </CustomFormLabel>
                   <RHFTextField variant="outlined" fullWidth name="last_name" />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 6 */}
                   <CustomFormLabel
                     sx={{
@@ -179,7 +179,7 @@ const AccountTab = () => {
                     name="mobile"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 2 */}
                   <CustomFormLabel
                     sx={{
@@ -195,7 +195,7 @@ const AccountTab = () => {
                     name="national_id"
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 2 */}
                   <CustomFormLabel
                     sx={{
@@ -207,7 +207,7 @@ const AccountTab = () => {
                   </CustomFormLabel>
                   <RHFDataPicker name="birthdate" />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel
                     sx={{
                       mt: 0,
@@ -232,7 +232,7 @@ const AccountTab = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 3 */}
                   <CustomFormLabel
                     sx={{
@@ -250,7 +250,7 @@ const AccountTab = () => {
                     ))}
                   </RHFSelect>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 5 */}
                   <CustomFormLabel
                     sx={{
@@ -262,7 +262,7 @@ const AccountTab = () => {
                   </CustomFormLabel>
                   <RHFTextField variant="outlined" fullWidth name="name" />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 5 */}
                   <CustomFormLabel
                     sx={{
@@ -281,7 +281,7 @@ const AccountTab = () => {
                   />
                 </Grid>
 
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   {/* 7 */}
                   <CustomFormLabel
                     sx={{
@@ -325,7 +325,7 @@ const AccountTab = () => {
         </FormProvider>
       </Grid>
       {/* Change Profile */}
-      {/* <Grid item xs={12} lg={6}>
+      {/* <Grid size={{ xs: 12, lg: 6 }}>
         <BlankCard>
           <CardContent>
             <Typography variant="h5" mb={1}>
@@ -364,7 +364,7 @@ const AccountTab = () => {
         </BlankCard>
       </Grid> */}
       {/*  Change Password */}
-      {/* <Grid item xs={12} lg={6}>
+      {/* <Grid size={{ xs: 12, lg: 6 }}>
         <BlankCard>
           <CardContent>
             <Typography variant="h5" mb={1}>

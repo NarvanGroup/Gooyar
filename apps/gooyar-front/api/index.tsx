@@ -11,7 +11,8 @@ interface ApiArgsModel {
   isAuthorizationNeeded?: boolean;
 }
 
-export const baseURL = process.env.NEXT_PUBLIC_BASE_API_URL;
+export const baseURL =
+  process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:3001";
 
 export const apiVersion1 = "api/v1";
 
@@ -20,15 +21,15 @@ const getHeader = (isAuthorizationNeeded: boolean) => {
     Authorization?: string;
   } = {};
 
-  if (isAuthorizationNeeded) {
-    const token = JSON.parse(localStorage.getItem("token") || "");
+  // if (isAuthorizationNeeded) {
+  //   const token = JSON.parse(localStorage.getItem("token") || "");
 
-    if (token) {
-      header.Authorization = token ? `Bearer ${token}` : "";
-      return header;
-    }
-    return header;
-  }
+  //   if (token) {
+  //     header.Authorization = token ? `Bearer ${token}` : "";
+  //     return header;
+  //   }
+  //   return header;
+  // }
   return header;
 };
 

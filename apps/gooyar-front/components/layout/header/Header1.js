@@ -22,7 +22,12 @@ export default function Header1({ scroll, handleMobileMenu }) {
                   <nav className="menu-nav">
                     <div className="logo">
                       <Link href="/">
-                        <img src="/assets/img/logo/logo.png" alt="Logo" />
+                        <img
+                          src="/assets/img/logo/logo.png"
+                          alt="Logo"
+                          width={130}
+                          height={100}
+                        />
                       </Link>
                     </div>
                     <div className="navbar-wrap main-menu d-none d-lg-flex">
@@ -195,7 +200,7 @@ export default function Header1({ scroll, handleMobileMenu }) {
                           <LanguageDropdown />
                         </li> */}
                         <li className="header-btn">
-                          <Link href="/login" className="btn">
+                          <Link href="/" className="btn">
                             ورود/ثبت نام
                           </Link>
                         </li>
@@ -211,7 +216,12 @@ export default function Header1({ scroll, handleMobileMenu }) {
                     </div>
                     <div className="nav-logo">
                       <Link href="/">
-                        <img src="/assets/img/logo/logo.png" alt="Logo" />
+                        <img
+                          src="/assets/img/logo/logo.png"
+                          alt="Logo"
+                          width={100}
+                          height={70}
+                        />
                       </Link>
                     </div>
                     <div className="menu-outer">

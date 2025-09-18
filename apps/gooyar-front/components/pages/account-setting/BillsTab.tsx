@@ -24,7 +24,7 @@ const BillsTab = () => {
   return (
     <>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12} lg={9}>
+        <Grid size={{ xs: 12, lg: 9 }}>
           <BlankCard>
             <CardContent>
               <Typography variant="h4" mb={2}>
@@ -32,7 +32,7 @@ const BillsTab = () => {
               </Typography>
 
               <Grid container spacing={3}>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel sx={{ mt: 0 }} htmlFor="text-bname">
                     Business Name*
                   </CustomFormLabel>
@@ -43,7 +43,7 @@ const BillsTab = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel sx={{ mt: 0 }} htmlFor="text-bsector">
                     Business Sector*
                   </CustomFormLabel>
@@ -54,7 +54,7 @@ const BillsTab = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel sx={{ mt: 0 }} htmlFor="text-baddress">
                     Business Address*
                   </CustomFormLabel>
@@ -65,7 +65,7 @@ const BillsTab = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel sx={{ mt: 0 }} htmlFor="text-bcy">
                     Country*
                   </CustomFormLabel>
@@ -76,7 +76,7 @@ const BillsTab = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel sx={{ mt: 0 }} htmlFor="text-fname">
                     First Name*
                   </CustomFormLabel>
@@ -87,7 +87,7 @@ const BillsTab = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid size={{ xs: 12, sm: 6 }}>
                   <CustomFormLabel sx={{ mt: 0 }} htmlFor="text-lname">
                     Last Name*
                   </CustomFormLabel>
@@ -104,7 +104,7 @@ const BillsTab = () => {
         </Grid>
 
         {/* 2 */}
-        <Grid item xs={12} lg={9}>
+        <Grid size={{ xs: 12, lg: 9 }}>
           <BlankCard>
             <CardContent>
               <Typography variant="h4" display="flex" mb={2}>
@@ -166,7 +166,7 @@ const BillsTab = () => {
         </Grid>
 
         {/* 3 */}
-        <Grid item xs={12} lg={9}>
+        <Grid size={{ xs: 12, lg: 9 }}>
           <BlankCard>
             <CardContent>
               <Typography variant="h4" mb={2}>

@@ -18,7 +18,7 @@ const Features = () => {
         {/* <FeatureTitle /> */}
 
         <Grid container spacing={3} mt={3}>
-          <Grid item xs sm={6} lg>
+          <Grid size={{ sm: 6 }}>
             <Box mb={3} bgcolor="warning.light" borderRadius="24px">
               <Box px={4} py="65px">
                 <Stack direction="column" spacing={2} textAlign="center">
@@ -69,9 +69,7 @@ const Features = () => {
             </Box>
           </Grid>
           <Grid
-            item
-            xs={12}
-            lg={5}
+            size={{ xs: 12, lg: 5 }}
             sx={{
               order: {
                 xs: 3,
@@ -122,10 +120,7 @@ const Features = () => {
             </Box>
           </Grid>
           <Grid
-            item
-            xs
-            sm={6}
-            lg
+            size={{ sm: 6 }}
             sx={{
               order: {
                 xs: 2,

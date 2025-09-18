@@ -31,7 +31,7 @@ const MusicCard = () => {
   return (
     <Grid container spacing={3}>
       {musicCard.map((card, index) => (
-        <Grid item xs={12} sm={4} key={index}>
+        <Grid size={{ xs: 12, sm: 4 }} key={index}>
           <Card sx={{ display: 'flex', p: 0 }}>
             <Box sx={{ display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flex: '1 0 auto' }}>

@@ -1,6 +1,5 @@
 import {
   Box,
-  Box,
   CardContent,
   Card,
   Grid,
@@ -11,7 +10,7 @@ import {
 export default function DataStatistics() {
   return (
     <Grid container spacing={2} sx={{ mb: 2 }}>
-      <Grid item xs={2.4}>
+      <Grid size={{ xs: 2.4 }}>
         <Card>
           <CardContent sx={{ textAlign: "center" }}>
             <Typography variant="body2" color="textSecondary">
@@ -31,7 +30,7 @@ export default function DataStatistics() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={2.4}>
+      <Grid size={{ xs: 2.4 }}>
         <Card>
           <CardContent sx={{ textAlign: "center" }}>
             <Typography variant="body2" color="textSecondary">
@@ -41,7 +40,7 @@ export default function DataStatistics() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={2.4}>
+      <Grid size={{ xs: 2.4 }}>
         <Card>
           <CardContent sx={{ textAlign: "center" }}>
             <Typography variant="body2" color="textSecondary">
@@ -52,7 +51,7 @@ export default function DataStatistics() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={2.4}>
+      <Grid size={{ xs: 2.4 }}>
         <Card>
           <CardContent sx={{ textAlign: "center" }}>
             <Typography variant="body2" color="textSecondary">
@@ -62,7 +61,7 @@ export default function DataStatistics() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={2.4}>
+      <Grid size={{ xs: 2.4 }}>
         <Card>
           <CardContent sx={{ textAlign: "center" }}>
             <Typography variant="body2" color="textSecondary">

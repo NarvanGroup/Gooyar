@@ -102,20 +102,20 @@ const [country, setCountry] = React.useState('');
         Account Details
     </Typography>
     <Grid container spacing={3}>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-uname" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Username
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomTextField id="fs-uname" placeholder="John Deo" fullWidth />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-email" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Email
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             endAdornment={<InputAdornment position="end">@example.com</InputAdornment>}
             id="fs-email"
@@ -123,12 +123,12 @@ const [country, setCountry] = React.useState('');
             fullWidth
           />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-pwd" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Password
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomOutlinedInput
             type={showPassword ? 'text' : 'password'}
             endAdornment={
@@ -148,26 +148,26 @@ const [country, setCountry] = React.useState('');
             fullWidth
           />
         </Grid>
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <Divider sx={{mx: "-24px"}} />
           <Typography variant="h6" mt={2}>
             Personal Info
           </Typography>
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-fname" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Full Name
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomTextField id="fs-fname" placeholder="John Deo" fullWidth />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-country" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Country
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomSelect
             id="standard-select-currency"
             value={country}
@@ -182,24 +182,24 @@ const [country, setCountry] = React.useState('');
             ))}
           </CustomSelect>
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-date" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Birth Date
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomTextField type="date" id="fs-date" placeholder="John Deo" fullWidth />
         </Grid>
-        <Grid item xs={12} sm={3} display="flex" alignItems="center">
+        <Grid size={{ xs: 12, sm: 3 }} display="flex" alignItems="center">
           <CustomFormLabel htmlFor="fs-phone" sx={{ mt: 0, mb: { xs: '-10px', sm: 0 } }}>
             Phone no
           </CustomFormLabel>
         </Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <CustomTextField id="fs-phone" placeholder="123 4567 201" fullWidth />
         </Grid>
-        <Grid item xs={12} sm={3}></Grid>
-        <Grid item xs={12} sm={9}>
+        <Grid size={{ xs: 12, sm: 3 }}></Grid>
+        <Grid size={{ xs: 12, sm: 9 }}>
           <Stack direction="row" spacing={2}>
             <Button variant="contained" color="primary">
               Submit

@@ -11,7 +11,13 @@ import textToSpeech from "@google-cloud/text-to-speech";
 import dotenv from "dotenv";
 import util from "util";
 import telegramRoutes from "./routes/telegram.js";
+import whatsappRoutes from "./routes/whatsapp.js";
+import agentsRoutes from "./routes/agents.js";
+import contactPointsRoutes from "./routes/contact-points.js";
+import knowledgeBaseRoutes from "./routes/knowledge-base.js";
+import processesRoutes from "./routes/processes.js";
 import telegramService from "./telegram.js";
+import whatsappService from "./whatsapp.js";
 
 dotenv.config();
 
@@ -61,8 +67,13 @@ app.use(
 );
 app.use(express.json());
 
-// Telegram routes
-app.use("/api/telegram", telegramRoutes);
+// API routes
+app.use("/api/v1/telegram", telegramRoutes);
+app.use("/api/v1/whatsapp", whatsappRoutes);
+app.use("/api/v1/agents", agentsRoutes);
+app.use("/api/v1/contact-points", contactPointsRoutes);
+app.use("/api/v1/knowledge-base", knowledgeBaseRoutes);
+app.use("/api/v1/processes", processesRoutes);
 
 // WebSocket connection handling
 io.on("connection", (socket) => {
@@ -95,6 +106,36 @@ io.on("connection", (socket) => {
     }
   });
 
+  // Handle WhatsApp message events
+  socket.on("whatsapp:send-code", async (data) => {
+    try {
+      const result = await whatsappService.sendVerificationCode(
+        data.phoneNumber
+      );
+      socket.emit("whatsapp:send-code:response", result);
+    } catch (error) {
+      socket.emit("whatsapp:send-code:response", {
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
+  socket.on("whatsapp:verify-code", async (data) => {
+    try {
+      const result = await whatsappService.completeVerification(
+        data.phoneNumber,
+        data.verificationCode
+      );
+      socket.emit("whatsapp:verify-code:response", result);
+    } catch (error) {
+      socket.emit("whatsapp:verify-code:response", {
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
   socket.on("telegram:send-message", async (data) => {
     try {
       console.log("Received send message request:", data);
@@ -111,6 +152,25 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.error("Send message error:", error);
       socket.emit("telegram:send-message:response", {
+        success: false,
+        error: error.message,
+      });
+    }
+  });
+
+  socket.on("whatsapp:send-message", async (data) => {
+    try {
+      console.log("Received WhatsApp send message request:", data);
+
+      const result = await whatsappService.sendMessage(
+        data.phoneNumber,
+        data.message
+      );
+      console.log("WhatsApp send message result:", result);
+      socket.emit("whatsapp:send-message:response", result);
+    } catch (error) {
+      console.error("WhatsApp send message error:", error);
+      socket.emit("whatsapp:send-message:response", {
         success: false,
         error: error.message,
       });

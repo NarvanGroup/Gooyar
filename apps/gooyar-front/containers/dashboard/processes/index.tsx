@@ -1,70 +1,99 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
+import { toast } from "react-hot-toast";
 import PageContainer from "@/components/container/PageContainer";
 import ProcessesTable from "./components/ProcessesTable";
 import { Process } from "./types";
 import ProcessBuilderWizard from "./processBuilderWizard";
 import CreateProcessDialog from "./components/CreateProcessDialog";
+import {
+  getProcessesService,
+  createProcessService,
+  deleteProcessService,
+  toggleProcessStatusService,
+} from "@/api/services/processesServices";
+import { ProcessModel } from "@/api/services/processesServices/models";
 
 const Processes = () => {
   const [openCreateDialog, setOpenCreateDialog] = useState(false);
-  const [processes, setProcesses] = useState<Process[]>([
-    {
-      id: "1",
-      name: "پشتیبانی مشتریان",
-      agent: "دستیار هوشمند",
-      contactPoints: ["واتساپ", "تلفن"],
-      knowledgeBases: ["FAQ", "راهنمای محصول"],
-      status: "فعال",
-      createdAt: "۱۴۰۲/۱۲/۱۵",
-      lastActivity: "۲ ساعت پیش",
-    },
-    {
-      id: "2",
-      name: "فروش و مشاوره",
-      agent: "کارشناس فروش",
-      contactPoints: ["تلگرام", "ایمیل"],
-      knowledgeBases: ["کاتالوگ محصولات", "قیمت‌ها"],
-      status: "غیرفعال",
-      createdAt: "۱۴۰۲/۱۲/۱۰",
-      lastActivity: "۱ روز پیش",
-    },
-  ]);
+  const [processes, setProcesses] = useState<ProcessModel[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreateProcess = (processData: any) => {
-    // Here you would typically save to API
-    const newProcess: Process = {
-      id: Date.now().toString(),
-      name: processData.name || "فرآیند جدید",
-      agent: "عامل جدید",
-      contactPoints: ["واتساپ"],
-      knowledgeBases: ["پایگاه دانش"],
-      status: "فعال",
-      createdAt: new Date().toLocaleDateString("fa-IR"),
-      lastActivity: "همین الان",
-    };
+  // Load processes on component mount
+  useEffect(() => {
+    loadProcesses();
+  }, []);
 
-    setProcesses([...processes, newProcess]);
-    setOpenCreateDialog(false);
+  const loadProcesses = async () => {
+    try {
+      setIsLoading(true);
+      const response = await getProcessesService();
+      if (response?.success) {
+        setProcesses(response.data || []);
+      } else {
+        toast.error("Failed to load processes");
+      }
+    } catch (error) {
+      console.error("Error loading processes:", error);
+      toast.error("Failed to load processes");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleDeleteProcess = (id: string) => {
-    setProcesses(processes.filter((process) => process.id !== id));
+  const handleCreateProcess = async (processData: any) => {
+    try {
+      const response = await createProcessService({
+        name: processData.name || "فرآیند جدید",
+        agent: "عامل جدید",
+        contactPoints: ["واتساپ"],
+        knowledgeBases: ["پایگاه دانش"],
+        status: "فعال",
+      });
+
+      if (response?.success) {
+        toast.success("Process created successfully");
+        setOpenCreateDialog(false);
+        loadProcesses(); // Reload processes
+      } else {
+        toast.error(response?.error || "Failed to create process");
+      }
+    } catch (error) {
+      console.error("Error creating process:", error);
+      toast.error("Failed to create process");
+    }
   };
 
-  const handleToggleStatus = (id: string) => {
-    setProcesses(
-      processes.map((process) =>
-        process.id === id
-          ? {
-              ...process,
-              status: process.status === "فعال" ? "غیرفعال" : "فعال",
-            }
-          : process
-      )
-    );
+  const handleDeleteProcess = async (id: string) => {
+    try {
+      const response = await deleteProcessService(id);
+      if (response?.success) {
+        toast.success("Process deleted successfully");
+        loadProcesses(); // Reload processes
+      } else {
+        toast.error(response?.error || "Failed to delete process");
+      }
+    } catch (error) {
+      console.error("Error deleting process:", error);
+      toast.error("Failed to delete process");
+    }
+  };
+
+  const handleToggleStatus = async (id: string) => {
+    try {
+      const response = await toggleProcessStatusService(id);
+      if (response?.success) {
+        toast.success("Process status updated successfully");
+        loadProcesses(); // Reload processes
+      } else {
+        toast.error(response?.error || "Failed to update process status");
+      }
+    } catch (error) {
+      console.error("Error updating process status:", error);
+      toast.error("Failed to update process status");
+    }
   };
 
   return (

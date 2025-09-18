@@ -252,13 +252,13 @@ export default function PhoneNumbers() {
           mb: 3,
         }}
       >
-        <Typography variant="h6">Phone Numbers</Typography>
+        <Typography variant="h6">شماره های تلفن</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={() => handleOpenDialog()}
         >
-          Add Phone Number
+          افزودن شماره تلفن
         </Button>
       </Box>
 
@@ -267,73 +267,75 @@ export default function PhoneNumbers() {
           <CircularProgress />
         </Box>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={2} pb={3}>
           {phoneNumbers.map((phone) => (
-            <Grid item xs={12} sm={6} md={4} key={phone.id}>
-              <Card>
-                <CardContent>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "flex-start",
-                    }}
-                  >
-                    <Box>
-                      <Typography variant="h6">
-                        {phone.country_code} {phone.phone_number}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        {phone.label}
-                      </Typography>
-                      <Box sx={{ mt: 1 }}>
-                        {phone.is_verified ? (
-                          <Chip
-                            icon={<CheckCircleIcon />}
-                            label="Verified"
-                            color="success"
-                            size="small"
-                          />
-                        ) : (
-                          <Chip
-                            icon={<CancelIcon />}
-                            label="Not Verified"
-                            color="error"
-                            size="small"
-                          />
-                        )}
-                      </Box>
-                    </Box>
-                    <Box>
-                      <IconButton
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={phone.id}>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  border: "1px solid #e0e0e0",
+                  p: 2,
+                  borderRadius: 1,
+                  width: "100%",
+                  minWidth: 300,
+                }}
+              >
+                <Box width="100%">
+                  <Typography variant="h6" color="textPrimary">
+                    {phone.country_code} {phone.phone_number}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {phone.label}
+                  </Typography>
+                  <Box sx={{ mt: 1 }}>
+                    {phone.is_verified ? (
+                      <Chip
+                        icon={<CheckCircleIcon />}
+                        label="Verified"
+                        color="success"
                         size="small"
-                        onClick={() => handleOpenDialog(phone)}
-                        color="primary"
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleDelete(phone.id!)}
+                      />
+                    ) : (
+                      <Chip
+                        icon={<CancelIcon />}
+                        label="Not Verified"
                         color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
+                        size="small"
+                      />
+                    )}
                   </Box>
-                  {!phone.is_verified && (
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => handleSendOTP(phone)}
-                      disabled={otpLoading}
-                      sx={{ mt: 1 }}
-                    >
-                      {otpLoading ? <CircularProgress size={16} /> : "Verify"}
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
+                </Box>
+                <Box>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleOpenDialog(phone)}
+                    color="primary"
+                  >
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleDelete(phone.id!)}
+                    color="error"
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+
+                {!phone.is_verified && (
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => handleSendOTP(phone)}
+                    disabled={otpLoading}
+                    sx={{ mt: 1 }}
+                  >
+                    {otpLoading ? <CircularProgress size={16} /> : "Verify"}
+                  </Button>
+                )}
+              </Box>
             </Grid>
           ))}
         </Grid>

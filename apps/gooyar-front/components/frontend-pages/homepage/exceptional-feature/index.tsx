@@ -227,7 +227,7 @@ const ExceptionalFeature = () => {
               alignItems="center"
               justifyContent="center"
             >
-              <Grid item xs={12} lg={7} sm={9}>
+              <Grid size={{ xs: 12, lg: 7, sm: 9 }}>
                 <Typography
                   variant="h4"
                   mb="55px"

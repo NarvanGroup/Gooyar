@@ -89,7 +89,7 @@ const PageImpressions = () => {
         <Typography variant="h5">Page Impressions</Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={5}>
+          <Grid size={{ xs: 5 }}>
             <Typography variant="h4" mt={3} fontWeight={600}>
               $456,120
             </Typography>
@@ -109,7 +109,7 @@ const PageImpressions = () => {
               </Typography>
             </Stack>
           </Grid>
-          <Grid item xs={7}>
+          <Grid size={{ xs: 7 }}>
             <Chart
               options={optionscolumnchart}
               series={seriescolumnchart}

@@ -21,7 +21,7 @@ const Banner1 = () => {
     >
       <CardContent sx={{ p: '30px' }}>
         <Grid container spacing={3} justifyContent="space-between">
-          <Grid item sm={6} display="flex" alignItems="center">
+          <Grid size={{ sm: 6 }} display="flex" alignItems="center">
             <Box
               sx={{
                 textAlign: {
@@ -39,7 +39,7 @@ const Banner1 = () => {
               </Button>
             </Box>
           </Grid>
-          <Grid item sm={4}>
+          <Grid size={{ sm: 4 }}>
             <Box mb="-150px">
               <Image src={"/images/backgrounds/track-bg.png"} alt={"trackBg"} height={195} width={168} />
             </Box>

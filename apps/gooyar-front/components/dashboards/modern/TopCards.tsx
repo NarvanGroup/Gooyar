@@ -53,7 +53,7 @@ const TopCards = () => {
   return (
     <Box display="flex" gap={3} mt={2} width="100%">
       {topcards.map((topcard, i) => (
-        // <Grid item xs={12} sm={4} lg={2} key={i}>
+        // <Grid size={{ xs: 12, sm: 4, lg: 2 }} key={i}>
         <Box bgcolor={topcard.bgcolor + ".light"} textAlign="center">
           <CardContent
             sx={{

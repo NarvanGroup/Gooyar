@@ -76,7 +76,7 @@ const ApexRadar = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid item lg={6} md={12} xs={12}>
+      <Grid size={{ lg: 6, md: 12, xs: 12 }}>
         <ParentCard
           title="Radialbar Charts"
           codeModel={<RadialbarChartsCode />}
@@ -90,7 +90,7 @@ const ApexRadar = () => {
           />
         </ParentCard>
       </Grid>
-      <Grid item lg={6} md={12} xs={12}>
+      <Grid size={{ lg: 6, md: 12, xs: 12 }}>
         <ParentCard title="Radar Charts" codeModel={<RadarChartsCode />}>
           <Chart
             options={optionsradarchart}

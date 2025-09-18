@@ -38,7 +38,7 @@ const FollowerCard = () => {
     <ParentCard title="Follower Card" codeModel={<FollowerCardCode />}>
       <Grid container spacing={3}>
         {followerCard.map((card, index) => (
-          <Grid item xs={12} sm={4} key={index}>
+          <Grid size={{ xs: 12, sm: 4 }} key={index}>
             <BlankCard>
               <CardContent>
                 <Stack

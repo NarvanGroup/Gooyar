@@ -115,9 +115,7 @@ const ProcessBanner: React.FC = () => {
           <Grid container spacing={isMobile ? 2 : 4} alignItems="center">
             {steps.map((step, index) => (
               <Grid
-                item
-                xs={12}
-                sm={4}
+                size={{ xs: 12, sm: 4 }}
                 key={index}
                 sx={{
                   display: "flex",

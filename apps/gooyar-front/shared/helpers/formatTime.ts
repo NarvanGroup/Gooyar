@@ -14,7 +14,7 @@ export function fDate(date: InputValue, newFormat?: string) {
 export function fPersianDate(date: InputValue, newFormat?: string) {
   const fm = newFormat || "jYYYY/jM/jD - HH:mm:ss";
 
-  return moment(date).tz("Asia/Tehran").format(fm);
+  return (moment(date) as any).tz("Asia/Tehran").format(fm);
 }
 
 export function fDateTime(date: InputValue, newFormat?: string) {

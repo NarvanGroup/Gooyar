@@ -83,7 +83,7 @@ const SecurityTab = () => {
   return (
     <>
       <Grid container spacing={3} justifyContent="center">
-        <Grid item xs={12}>
+        <Grid size={{ xs: 12 }}>
           <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
             <BlankCard>
               <CardContent>
@@ -94,7 +94,7 @@ const SecurityTab = () => {
                   اطلاعات وارد شده باید مطابق شماره همراه باشد.
                 </Typography>
                 <Grid container spacing={3}>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <CustomFormLabel
                       sx={{
                         mt: 0,
@@ -111,7 +111,7 @@ const SecurityTab = () => {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     {/* 2 */}
                     <CustomFormLabel
                       sx={{
@@ -129,7 +129,7 @@ const SecurityTab = () => {
                       name=""
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <CustomFormLabel
                       sx={{
                         mt: 0,
@@ -146,7 +146,7 @@ const SecurityTab = () => {
                       name=""
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     {/* 2 */}
                     <CustomFormLabel
                       sx={{
@@ -164,7 +164,7 @@ const SecurityTab = () => {
                       name=""
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     {/* 2 */}
                     <CustomFormLabel
                       sx={{
@@ -182,7 +182,7 @@ const SecurityTab = () => {
                       name=""
                     />
                   </Grid>
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     <CustomFormLabel
                       sx={{
                         mt: 0,
@@ -210,7 +210,7 @@ const SecurityTab = () => {
                     />
                   </Grid>
 
-                  <Grid item xs={12} sm={6}>
+                  <Grid size={{ xs: 12, sm: 6 }}>
                     {/* 6 */}
                     <CustomFormLabel
                       sx={{

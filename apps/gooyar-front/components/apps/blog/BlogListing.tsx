@@ -54,7 +54,7 @@ const BlogListing = () => {
       {blogPosts.map((post) => {
         return <BlogCard post={post} key={post.id} />;
       })} */}
-      <Grid item lg={12} sm={12} mt={3}>
+      <Grid size={{ lg: 12, sm: 12 }} mt={3}>
         <Pagination
           count={10}
           color="primary"

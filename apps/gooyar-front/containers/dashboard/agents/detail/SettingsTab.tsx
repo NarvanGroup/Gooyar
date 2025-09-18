@@ -1,10 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
   MenuItem,
   Typography,
   Card,
@@ -15,58 +11,78 @@ import {
   Button,
   Divider,
   Stack,
-  InputAdornment,
+  CircularProgress,
 } from "@mui/material";
-import Grid from "@mui/material/Grid";
 
 import CustomFormLabel from "@/components/forms/theme-elements/CustomFormLabel";
 import CustomTextField from "@/components/forms/theme-elements/CustomTextField";
-import CustomOutlinedInput from "@/components/forms/theme-elements/CustomOutlinedInput";
 import CustomSelect from "@/components/forms/theme-elements/CustomSelect";
+import { AgentModel } from "@/api/services/agentsServices/models";
 
 interface SettingsTabProps {
-  agentId: string;
+  agent: AgentModel;
+  onSave: (data: Partial<AgentModel>) => Promise<void>;
+  saving: boolean;
 }
 
-const countries = [
-  {
-    value: "iran",
-    label: "ایران",
-  },
-  {
-    value: "afghanistan",
-    label: "افغانستان",
-  },
-  {
-    value: "tajikistan",
-    label: "تاجیکستان",
-  },
+const agentTypes = [
+  { value: "voice", label: "صوتی" },
+  { value: "text", label: "متنی" },
+  { value: "both", label: "هر دو" },
 ];
 
-const lang = [
-  {
-    value: "fa",
-    label: "فارسی",
-  },
-  {
-    value: "en",
-    label: "انگلیسی",
-  },
-  {
-    value: "ar",
-    label: "عربی",
-  },
+const voiceTypes = [
+  { value: "calm", label: "آرام" },
+  { value: "happy", label: "شاد" },
+  { value: "professional", label: "حرفه‌ای" },
+  { value: "friendly", label: "دوستانه" },
 ];
 
-const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
+const languages = [
+  { value: "Farsi", label: "فارسی" },
+  { value: "Arabic", label: "عربی" },
+  { value: "English", label: "انگلیسی" },
+  { value: "Azari", label: "آذری" },
+  { value: "Kurdi", label: "کردی" },
+];
+
+const ambientSounds = [
+  { value: false, label: "غیرفعال" },
+  { value: true, label: "فعال" },
+  { value: "coffee shop", label: "کافه" },
+  { value: "office", label: "دفتر" },
+  { value: "nature", label: "طبیعت" },
+  { value: "silence", label: "سکوت" },
+];
+
+const agentPurposes = [
+  { value: "customer-service", label: "خدمات مشتری" },
+  { value: "receptionist", label: "پذیرش" },
+  { value: "sales", label: "فروش" },
+  { value: "support", label: "پشتیبانی" },
+  { value: "general", label: "عمومی" },
+];
+
+const tones = [
+  { value: "friendly", label: "دوستانه" },
+  { value: "professional", label: "حرفه‌ای" },
+  { value: "casual", label: "غیررسمی" },
+  { value: "formal", label: "رسمی" },
+];
+
+const SettingsTab: React.FC<SettingsTabProps> = ({ agent, onSave, saving }) => {
   const [formData, setFormData] = useState({
-    agentName: "",
-    voice: "",
-    language: "",
-    ambientSound: false,
-    ambientSoundLevel: 50,
-    companyInfo: "",
-    agentObjective: "",
+    name: agent.name || "",
+    "agent-type": agent["agent-type"] || "text",
+    voice: agent.voice || "calm",
+    language: agent.language || "Farsi",
+    "ambient-sound": agent["ambient-sound"] || false,
+    "company-info": agent["company-info"] || "",
+    "agent-objective": agent["agent-objective"] || "",
+    "agent-purpose": agent["agent-purpose"] || "general",
+    "custom-greeting": agent["custom-greeting"] || "",
+    prompt: agent.prompt || "",
+    tone: agent.tone || "friendly",
   });
 
   const [voiceSettings, setVoiceSettings] = useState({
@@ -77,24 +93,47 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
     noiseReduction: false,
   });
 
-  const handleFormChange = (field: string, value: any) => {
+  // Update form data when agent changes
+  useEffect(() => {
+    setFormData({
+      name: agent.name || "",
+      "agent-type": agent["agent-type"] || "text",
+      voice: agent.voice || "calm",
+      language: agent.language || "Farsi",
+      "ambient-sound": agent["ambient-sound"] || false,
+      "company-info": agent["company-info"] || "",
+      "agent-objective": agent["agent-objective"] || "",
+      "agent-purpose": agent["agent-purpose"] || "general",
+      "custom-greeting": agent["custom-greeting"] || "",
+      prompt: agent.prompt || "",
+      tone: agent.tone || "friendly",
+    });
+  }, [agent]);
+
+  const handleFormChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleVoiceSettingsChange = (field: string, value: any) => {
+  const handleVoiceSettingsChange = (
+    field: string,
+    value: number | boolean
+  ) => {
     setVoiceSettings((prev) => ({
       ...prev,
       [field]: value,
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form data:", formData);
-    console.log("Voice settings:", voiceSettings);
+    try {
+      await onSave(formData);
+    } catch (error) {
+      console.error("Error saving settings:", error);
+    }
   };
 
   return (
@@ -107,26 +146,49 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
         {/* Main Form Fields */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
           <Box sx={{ flex: "1 1 300px", minWidth: 0 }}>
-            <CustomFormLabel htmlFor="fs-uname">نام</CustomFormLabel>
+            <CustomFormLabel htmlFor="fs-name">نام عامل</CustomFormLabel>
             <CustomTextField
-              id="fs-uname"
+              id="fs-name"
               fullWidth
-              value={formData.agentName}
-              onChange={(e) => handleFormChange("agentName", e.target.value)}
+              value={formData.name}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("name", e.target.value)
+              }
               required
             />
           </Box>
 
           <Box sx={{ flex: "1 1 300px", minWidth: 0 }}>
-            <CustomFormLabel htmlFor="fs-voice">انتخاب صدا</CustomFormLabel>
+            <CustomFormLabel htmlFor="fs-agent-type">نوع عامل</CustomFormLabel>
             <CustomSelect
-              id="fs-voice"
-              value={formData.voice}
-              onChange={(e) => handleFormChange("voice", e.target.value)}
+              id="fs-agent-type"
+              value={formData["agent-type"]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("agent-type", e.target.value)
+              }
               fullWidth
               variant="outlined"
             >
-              {countries.map((option) => (
+              {agentTypes.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </CustomSelect>
+          </Box>
+
+          <Box sx={{ flex: "1 1 300px", minWidth: 0 }}>
+            <CustomFormLabel htmlFor="fs-voice">نوع صدا</CustomFormLabel>
+            <CustomSelect
+              id="fs-voice"
+              value={formData.voice}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("voice", e.target.value)
+              }
+              fullWidth
+              variant="outlined"
+            >
+              {voiceTypes.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -139,11 +201,13 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
             <CustomSelect
               id="fs-language"
               value={formData.language}
-              onChange={(e) => handleFormChange("language", e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("language", e.target.value)
+              }
               fullWidth
               variant="outlined"
             >
-              {lang.map((option) => (
+              {languages.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
@@ -155,15 +219,59 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
             <CustomFormLabel htmlFor="fs-ambient">صدای محیطی</CustomFormLabel>
             <CustomSelect
               id="fs-ambient"
-              value={formData.ambientSound ? "enabled" : "disabled"}
-              onChange={(e) =>
-                handleFormChange("ambientSound", e.target.value === "enabled")
+              value={formData["ambient-sound"]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("ambient-sound", e.target.value)
               }
               fullWidth
               variant="outlined"
             >
-              <MenuItem value="enabled">فعال</MenuItem>
-              <MenuItem value="disabled">غیرفعال</MenuItem>
+              {ambientSounds.map((option) => (
+                <MenuItem
+                  key={String(option.value)}
+                  value={String(option.value)}
+                >
+                  {option.label}
+                </MenuItem>
+              ))}
+            </CustomSelect>
+          </Box>
+
+          <Box sx={{ flex: "1 1 300px", minWidth: 0 }}>
+            <CustomFormLabel htmlFor="fs-purpose">هدف عامل</CustomFormLabel>
+            <CustomSelect
+              id="fs-purpose"
+              value={formData["agent-purpose"]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("agent-purpose", e.target.value)
+              }
+              fullWidth
+              variant="outlined"
+            >
+              {agentPurposes.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </CustomSelect>
+          </Box>
+
+          <Box sx={{ flex: "1 1 300px", minWidth: 0 }}>
+            <CustomFormLabel htmlFor="fs-tone">لحن</CustomFormLabel>
+            <CustomSelect
+              id="fs-tone"
+              value={formData.tone}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("tone", e.target.value)
+              }
+              fullWidth
+              variant="outlined"
+            >
+              {tones.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
             </CustomSelect>
           </Box>
         </Box>
@@ -171,14 +279,16 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
         {/* Full Width Fields */}
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <Box>
-            <CustomFormLabel htmlFor="fs-company">کمپانی</CustomFormLabel>
+            <CustomFormLabel htmlFor="fs-company">اطلاعات شرکت</CustomFormLabel>
             <CustomTextField
               id="fs-company"
               fullWidth
               multiline
               rows={3}
-              value={formData.companyInfo}
-              onChange={(e) => handleFormChange("companyInfo", e.target.value)}
+              value={formData["company-info"]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("company-info", e.target.value)
+              }
               placeholder="اطلاعات شرکت را وارد کنید..."
             />
           </Box>
@@ -190,9 +300,9 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
               fullWidth
               multiline
               rows={4}
-              value={formData.agentObjective}
-              onChange={(e) =>
-                handleFormChange("agentObjective", e.target.value)
+              value={formData["agent-objective"]}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                handleFormChange("agent-objective", e.target.value)
               }
               placeholder="هدف و منظور عامل را توصیف کنید..."
               required
@@ -203,10 +313,16 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
         {/* Buttons */}
         <Box>
           <Stack direction="row" spacing={2}>
-            <Button variant="contained" color="primary" type="submit">
-              ارسال
+            <Button
+              variant="contained"
+              color="primary"
+              type="submit"
+              disabled={saving}
+              startIcon={saving ? <CircularProgress size={20} /> : null}
+            >
+              {saving ? "در حال ذخیره..." : "ذخیره تنظیمات"}
             </Button>
-            <Button variant="text" color="error">
+            <Button variant="text" color="error" disabled={saving}>
               انصراف
             </Button>
           </Stack>
@@ -226,8 +342,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
                 <Typography gutterBottom>سرعت</Typography>
                 <Slider
                   value={voiceSettings.speed}
-                  onChange={(e, value) =>
-                    handleVoiceSettingsChange("speed", value)
+                  onChange={(e: Event, value: number | number[]) =>
+                    handleVoiceSettingsChange("speed", value as number)
                   }
                   min={0.5}
                   max={2}
@@ -241,8 +357,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
                 <Typography gutterBottom>زیر و بم</Typography>
                 <Slider
                   value={voiceSettings.pitch}
-                  onChange={(e, value) =>
-                    handleVoiceSettingsChange("pitch", value)
+                  onChange={(e: Event, value: number | number[]) =>
+                    handleVoiceSettingsChange("pitch", value as number)
                   }
                   min={0.5}
                   max={2}
@@ -256,8 +372,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
                 <Typography gutterBottom>بلندی صدا</Typography>
                 <Slider
                   value={voiceSettings.volume}
-                  onChange={(e, value) =>
-                    handleVoiceSettingsChange("volume", value)
+                  onChange={(e: Event, value: number | number[]) =>
+                    handleVoiceSettingsChange("volume", value as number)
                   }
                   min={0}
                   max={1}
@@ -274,7 +390,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
                   control={
                     <Switch
                       checked={voiceSettings.enableEcho}
-                      onChange={(e) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleVoiceSettingsChange(
                           "enableEcho",
                           e.target.checked
@@ -289,7 +405,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ agentId }) => {
                   control={
                     <Switch
                       checked={voiceSettings.noiseReduction}
-                      onChange={(e) =>
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         handleVoiceSettingsChange(
                           "noiseReduction",
                           e.target.checked

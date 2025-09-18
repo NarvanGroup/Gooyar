@@ -40,7 +40,7 @@ const C2a = () => {
         >
           <Container maxWidth="lg">
             <Grid container spacing={3} alignItems="center">
-              <Grid item xs={12} lg={6} sm={8}>
+              <Grid size={{ xs: 12, lg: 6, sm: 8 }}>
                 <Typography
                   variant="h4"
                   mb={3}
